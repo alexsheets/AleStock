@@ -32,7 +32,7 @@ namespace AleStock.Controllers
         public ActionResult SubmitInitReportChoices([DataSourceRequest] DataSourceRequest request, StockChoicesViewModel model)
         {
 
-            RunScript("simfin.py", model.Ticker, model.Quarter, model.Year);
+            RunScript(@"Scripts\simfin.py", model.Ticker, model.Quarter, model.Year);
             // receive results (or maybe set them in DB?)
             // send to page to view results
 
