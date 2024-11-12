@@ -5,10 +5,9 @@ class SimFinAPI:
     
     # initialize simfin class using 
     def __init__(self, key):
-        # self.key = key
-        # for now, input my own key 
-        self.key = '44978d92-383a-4797-b25a-55a7c855cd57'
+        self.key = key
         
+    # func for sending request, will be used for the different types of statements
     def send_request_company_statements(self, ticker, statement_type, year, period):
         headers = {
             "Accept": "application/json, text/plain, */*",
@@ -26,4 +25,19 @@ class SimFinAPI:
             return response.json()
         else:
             raise Exception(f'Request failed, status code: {response.status_code}')
+        
+    def pull_data(self, data):
+        if not data:
+            raise Exception("No data found.")
+        else:
+            ret_data = {}
+            data_extract = data[0]['statements'][0]['data'][0]
+            columns = data[0]['statements'][0]['columns']
+            
+            for index, key in enumerate(columns):
+                ret_data[key] = data_extract[index]
+               
+            return ret_data
+            
+        
         
