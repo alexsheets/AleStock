@@ -26,6 +26,7 @@ class SimFinAPI:
         else:
             raise Exception(f'Request failed, status code: {response.status_code}')
         
+    # function for extracting the data of separate kinds of statements and returning the json
     def pull_data(self, data):
         if not data:
             raise Exception("No data found.")
@@ -38,7 +39,42 @@ class SimFinAPI:
                 ret_data[key] = data_extract[index]
                
             return ret_data
-            
-
         
+    # create function which will aggregate the data and build a summary ubiquitously 
+    def build_json(self, data, columns):
+        summary = {}
+        for column, keys in columns.items():
+            summary[column] = {}
+            for key in keys:
+                val = data.get(key)
+                if isinstance(val, (int, float)):
+                    value = f"{value:,}"
+                elif val is None:
+                    value = "N/A"
+                else:
+                    value = val
+                
+                summary[column][key] = value
+         
+        return summary
+                    
+
+
+    # functions for pulling different statements and creating json data based on them
+
+    def pull_derived_data(self, ticker, year, period):
+        data = self.send_request_company_statements(ticker, "derived", year, period)
+        extracted_data = self.pull_data(data)
+        
+    def pull_cash_data(self, ticker, year, period):
+        data = self.send_request_company_statements(ticker, "cf", year, period)
+        extracted_data = self.pull_data(data)
+        
+    def pull_profit_loss(self, ticker, year, period):
+        data = self.send_request_company_statements(ticker, "pl", year, period)
+        extracted_data = self.pull_data(data)
+        
+    def pull_balance_sheet(self, ticker, year, period):
+        data = self.send_request_company_statements(ticker, "bs", year, period)
+        extracted_data = self.pull_data(data)
         
