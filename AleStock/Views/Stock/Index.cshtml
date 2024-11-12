@@ -1,0 +1,102 @@
+﻿@using Kendo.Mvc.UI;
+
+@model AleStock.Models.ViewModels.StockChoicesViewModel
+
+<style>
+
+    label {
+        display: block;
+    }
+
+    .inputDiv1 {
+        display: inline-block;
+    }
+
+    .inputDiv2 {
+        display: inline-block;
+        width: 300px;
+    }
+
+    .submitBtnDiv {
+        margin-top: 4%;
+        margin-bottom: 1%;
+    }
+
+</style>
+
+
+<div id="HomePage">
+
+    <!-- if there is an error, show the message at the top of the page that has been returned from the controller -->
+    @if (TempData["ValidationMsg"] != null)
+    {
+        <div class="form-row" id="AlertDiv">
+            <div class="alert alert-danger text-center" style="width:400px;margin:0 auto;margin-top:2%;" role="alert">
+                @TempData["ValidationMsg"]
+            </div>
+        </div>
+    }
+
+    @using (Html.BeginForm("SubmitStockChoices", "Stock", FormMethod.Post, new { @id = "SubmitStockChoicesForm" }))
+    {
+        // type in ticker
+        // choose quarter and year
+
+        <div class="inputDiv1">
+            <label>Type in ticker:</label>
+            @Html.Kendo().TextBoxFor(e => e.Ticker)
+        </div>
+
+        @Html.Raw("<br />")
+        @Html.Raw("<br />")
+
+        <div class="inputDiv2" id="dropdownInputDiv">
+            <label>Choose quarter of fiscal year to analyze:</label>
+            @(
+                Html.Kendo().DropDownListFor(m => m.Quarter)
+                .DataTextField("Text")
+                .DataValueField("Value")
+                .SelectedIndex(0)
+                .DataSource(source =>
+                {
+                    source.Read(read =>
+                    {
+                        read.Action("getQuarters", "Stock");
+                    });
+                })
+                )
+
+        </div>
+
+        @Html.Raw("<br />")
+        @Html.Raw("<br />")
+
+        <div class="inputDiv2" id="dropdownInputDiv">
+            <label>Choose year of financials to analyze:</label>
+            @(
+                Html.Kendo().DropDownListFor(m => m.Year)
+                .DataTextField("Text")
+                .DataValueField("Value")
+                .SelectedIndex(0)
+                .DataSource(source =>
+                {
+                    source.Read(read =>
+                    {
+                        read.Action("getYears", "Stock");
+                    });
+                })
+                )
+
+        </div>
+        
+
+        @Html.Raw("<br />")
+
+
+        <div class="submitBtnDiv">
+            <button type="submit" class="k-button">Submit</button>
+        </div>
+
+    }
+
+</div>

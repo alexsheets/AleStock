@@ -3,7 +3,7 @@ import urllib.request
 
 class SimFinAPI:
     
-    # initialize simfin class using 
+    # initialize simfin class using api key
     def __init__(self, key):
         self.key = key
         
@@ -39,5 +39,6 @@ class SimFinAPI:
                
             return ret_data
             
+
         
         
