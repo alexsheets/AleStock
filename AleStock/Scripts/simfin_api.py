@@ -58,23 +58,103 @@ class SimFinAPI:
          
         return summary
                     
-
+    # function to call and retrieve results from all finance web pulls
+    def pull_all_finances(self, ticker, year, period):
+        balance_json = self.pull_balance_sheet(ticker, year, period)
+        derived_json = self.pull_derived_data(ticker, year, period)
+        cash_json = self.pull_cash_data(ticker, year, period)
+        profit_json = self.pull_profit_loss(ticker, year, period)
+        return { balance_json, derived_json, cash_json, profit_json }
 
     # functions for pulling different statements and creating json data based on them
+    
+    def pull_balance_sheet(self, ticker, year, period):
+        data = self.send_request_company_statements(ticker, "bs", year, period)
+        extracted_data = self.pull_data(data)
+        category_map = {
+            "Assets": [
+                "Total Current Assets",
+                "Total Noncurrent Assets",
+                "Total Assets",
+            ],
+            "Liabilities": [
+                "Short Term Debt",
+                "Total Current Liabilities",
+                "Long Term Debt",
+                "Total Noncurrent Liabilities",
+                "Total Liabilities",
+            ],
+            "Equity": [
+                # amount of stock held by shareholders
+                "Common Stock",
+                # cumulative/net earnings of a company after accounting for dividend payouts
+                "Retained Earnings",
+                "Total Equity",
+            ],
+        }
+        
+        final_json = self.build_json(extracted_data, category_map)
+        return final_json
 
     def pull_derived_data(self, ticker, year, period):
         data = self.send_request_company_statements(ticker, "derived", year, period)
         extracted_data = self.pull_data(data)
+        category_map = {
+            "Profitability Metrics": [
+                "Gross Profit Margin",
+                "Operating Margin",
+                "Net Profit Margin",
+                "Return on Equity",
+                "Return on Assets",
+                "Return On Invested Capital",
+            ],
+            "Liquidity Metrics": ["Current Ratio"],
+            "Solvency Metrics": [
+                "Total Debt",
+                "Liabilities to Equity Ratio",
+                "Debt Ratio",
+            ],
+            "Other Important Metrics": [
+                "Dividend Payout Ratio",
+            ],
+        }
+        
+        final_json = self.build_json(extracted_data, category_map)
+        return final_json
         
     def pull_cash_data(self, ticker, year, period):
         data = self.send_request_company_statements(ticker, "cf", year, period)
         extracted_data = self.pull_data(data)
+        category_map = {
+            "Operating Activities": [
+                "Net Cash from Operating Activities",
+            ],
+            "Investing Activities": [
+                "Net Cash from Investing Activities",
+            ],
+            "Financing Activities": [
+                "Dividends Paid",
+                "Net Cash from Financing Activities",
+            ],
+            "Net Change": ["Net Change in Cash"],
+        }
+        
+        final_json = self.build_json(extracted_data, category_map)
+        return final_json
+
         
     def pull_profit_loss(self, ticker, year, period):
         data = self.send_request_company_statements(ticker, "pl", year, period)
         extracted_data = self.pull_data(data)
+        category_map = {
+            "Income": ["Revenue", "Gross Profit"],
+            "Expenses": [
+                "Operating Expenses",
+            ],
+            "Profitability": ["Operating Income (Loss)", "Pretax Income (Loss)"],
+        }
         
-    def pull_balance_sheet(self, ticker, year, period):
-        data = self.send_request_company_statements(ticker, "bs", year, period)
-        extracted_data = self.pull_data(data)
+        final_json = self.build_json(extracted_data, category_map)
+        return final_json
+        
         

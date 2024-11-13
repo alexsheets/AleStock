@@ -24,9 +24,11 @@ namespace AleStock.Models
         public float LiquidityRatio { get; set; }
         public float LiabilitiesToEquityRatio { get; set; }
         public float DebtRatio { get; set; }
+        public float TotalDebt {  get; set; }
         public float DividendPayoutRatio { get; set; }
 
         // company cash flow
+        public float DividendsPaid {  get; set; }
         public int NetCashOperating { get; set; }
         public int NetCashInvesting { get; set; }
         public int NetCashFinancing { get; set; }
