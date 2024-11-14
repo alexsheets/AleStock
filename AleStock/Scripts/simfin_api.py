@@ -3,6 +3,10 @@ import urllib.request
 
 class SimFinAPI:
     
+    ## TODO::
+    ## - create function to take the retrieved json and deposit into centralized database
+
+
     # initialize simfin class using api key
     def __init__(self, key):
         self.key = key

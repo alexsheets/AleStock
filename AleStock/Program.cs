@@ -1,3 +1,4 @@
+using Ale.Models;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 
@@ -15,6 +16,9 @@ builder.Services.AddMvc();
 builder.Services.AddSession(o => o.IdleTimeout = TimeSpan.FromMinutes(500));
 builder.Services.AddHttpContextAccessor();
 
+// add database
+builder.Services.AddDbContextPool<StockDbContext>(opt =>
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("StockDb")));
 
 var app = builder.Build();
 
