@@ -5,6 +5,7 @@ using Python.Runtime;
 using Kendo.Mvc.UI;
 using AleStock.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Supabase.Postgrest;
 
 namespace AleStock.Controllers
 {

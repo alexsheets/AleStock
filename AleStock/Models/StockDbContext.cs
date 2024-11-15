@@ -4,6 +4,10 @@ using System.Web.Razor.Parser.SyntaxTree;
 using AleStock.Models;
 using Microsoft.EntityFrameworkCore;
 using Telerik.SvgIcons;
+using Supabase;
+// using Supabase.Postgrest;
+// using Supabase.Interfaces;
+
 
 namespace Ale.Models;
 
@@ -12,8 +16,12 @@ public partial class StockDbContext : DbContext
 
     private string connString;
 
-    public StockDbContext() : base()
+    private readonly Client _supabaseClient;
+
+    public StockDbContext(Client supabaseClient) : base()
     {
+        _supabaseClient = supabaseClient;
+
         var builder = new ConfigurationBuilder();
         builder.AddJsonFile("appsettings.json", optional: false);
 
@@ -33,36 +41,34 @@ public partial class StockDbContext : DbContext
         base.OnConfiguring(optionsBuilder);
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    // RETRIEVAL DB operations
+    public async Task<List<StockEconomicalInfo>> GetAllStockReports()
     {
-
-        modelBuilder.Entity<StockEconomicalInfo>(entity =>
+        try
         {
-            entity.Property(e => e.Id).HasColumnName("Id");
-            entity.Property(e => e.Ticker).HasColumnName("Ticker");
-            entity.Property(e => e.Quarter).HasColumnName("Quarter");
-            entity.Property(e => e.Year).HasColumnName("Year");
-            entity.Property(e => e.TotalAssets).HasColumnName("TotalAssets");
-            entity.Property(e => e.TotalLiabilities).HasColumnName("TotalLiabilities");
-            entity.Property(e => e.TotalEquity).HasColumnName("TotalEquity");
-            entity.Property(e => e.ReturnOnAssets).HasColumnName("ReturnOnAssets");
-            entity.Property(e => e.ReturnOnEquity).HasColumnName("ReturnOnEquity");
-            entity.Property(e => e.ReturnOnInvested).HasColumnName("ReturnOnInvested");
-            entity.Property(e => e.LiquidityRatio).HasColumnName("LiquidityRatio");
-            entity.Property(e => e.LiabilitiesToEquityRatio).HasColumnName("LiabilitiesToEquityRatio");
-            entity.Property(e => e.DebtRatio).HasColumnName("DebtRatio");
-            entity.Property(e => e.TotalDebt).HasColumnName("TotalDebt");
-            entity.Property(e => e.DividendPayoutRatio).HasColumnName("DividendPayoutRatio");
-            entity.Property(e => e.DividendsPaid).HasColumnName("DividendsPaid");
-            entity.Property(e => e.NetCashOperating).HasColumnName("NetCashOperating");
-            entity.Property(e => e.NetCashFinancing).HasColumnName("NetCashFinancing");
-            entity.Property(e => e.NetCashInvesting).HasColumnName("NetCashInvesting");
-            entity.Property(e => e.NetCashDelta).HasColumnName("NetCashDelta");
-        });
-
-
-        OnModelCreatingPartial(modelBuilder);
+            var result = await _supabaseClient.From<StockEconomicalInfo>().Get();
+            return result.Models;
+        }
+        catch (Exception ex)
+        {
+            return new List<StockEconomicalInfo>();
+        }
     }
 
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+    public async Task<StockEconomicalInfo> GetSpecificStockReport(string ticker, string quarter, int year)
+    {
+        try
+        {
+            var result = await _supabaseClient.From<StockEconomicalInfo>()
+                .Where(e => (e.Ticker == ticker) && (e.Quarter == quarter) && (e.Year == year)).Get();
+            return result.Model;
+        }
+        catch (Exception ex)
+        {
+            return new StockEconomicalInfo();
+        }
+    }
+
+    // INSERT DB operations
+
 }

@@ -20,6 +20,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContextPool<StockDbContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("StockDb")));
 
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
