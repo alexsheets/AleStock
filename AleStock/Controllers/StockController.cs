@@ -28,8 +28,8 @@ namespace AleStock.Controllers
             String tick = _httpContextAccessor.HttpContext.Session.GetString("Ticker");
             String quarter = _httpContextAccessor.HttpContext.Session.GetString("Quarter");
             String year = _httpContextAccessor.HttpContext.Session.GetString("Year");
-            
 
+            // retrieve model associated
 
             return View();
         }
@@ -101,7 +101,8 @@ namespace AleStock.Controllers
             _httpContextAccessor.HttpContext.Session.SetString("Year", model.Year.ToString());
 
             RunScript(@"Scripts\simfin.py", model.Ticker, model.Quarter, model.Year);
-            // receive results (or maybe set them in DB?)
+
+            // receives results and processes them to db
             // send to page to view results
 
             return View("SpecificFinancials");
@@ -122,7 +123,13 @@ namespace AleStock.Controllers
                 var year = new PyInt(year_submitted);
 
                 var pyScript = Py.Import(script);
-                var result = pyScript.InvokeMethod("", new PyObject[] { ticker, quarter, year });
+                var result = pyScript.InvokeMethod("convert_to_json", new PyObject[] { ticker, quarter, year });
+
+                if (result != null)
+                {
+                    // process result here
+                }
+                
             }
         }
 

@@ -2,9 +2,6 @@ import json
 import urllib.request
 
 class SimFinAPI:
-    
-    ## TODO::
-    ## - create function to take the retrieved json and deposit into centralized database
 
 
     # initialize simfin class using api key
@@ -67,23 +64,20 @@ class SimFinAPI:
         balance_json = self.pull_balance_sheet(ticker, year, period)
         derived_json = self.pull_derived_data(ticker, year, period)
         cash_json = self.pull_cash_data(ticker, year, period)
-        profit_json = self.pull_profit_loss(ticker, year, period)
         # return all json as tuple
-        return ( balance_json, derived_json, cash_json, profit_json )
+        return ( balance_json, derived_json, cash_json )
     
     # function to convert all to text
-    def convert_to_text(self, ticker: str, year: str, period: str):
+    def convert_to_json(self, ticker: str, year: str, period: str):
         (
             balance_json,
             cash_flow_json,
             derived_json,
-            profit_loss_json,
-        ) = self.get_financials(ticker=ticker, year=year, period=period)
+        ) = self.pull_all_finances(ticker=ticker, year=year, period=period)
         return f"\
             {json.dumps(balance_json, indent=4)}\
             {json.dumps(cash_flow_json, indent=4)}\
             {json.dumps(derived_json, indent=4)}\
-            {json.dumps(profit_loss_json, indent=4)}\
         "
 
     # functions for pulling different statements and creating json data based on them
@@ -157,20 +151,6 @@ class SimFinAPI:
                 "Net Cash from Financing Activities",
             ],
             "Net Change": ["Net Change in Cash"],
-        }
-        
-        final_json = self.build_json(extracted_data, category_map)
-        return final_json
-     
-    def pull_profit_loss(self, ticker, year, period):
-        data = self.send_request_company_statements(ticker, "pl", year, period)
-        extracted_data = self.pull_data(data)
-        category_map = {
-            "Income": ["Revenue", "Gross Profit"],
-            "Expenses": [
-                "Operating Expenses",
-            ],
-            "Profitability": ["Operating Income (Loss)", "Pretax Income (Loss)"],
         }
         
         final_json = self.build_json(extracted_data, category_map)
