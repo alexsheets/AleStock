@@ -102,8 +102,6 @@ namespace AleStock.Controllers
             // retrieve model associated
             StockEconomicalInfo stockRecord = await _dbContext.GetSpecificStockReport(tick, quarter, year);
 
-
-
             return View(stockRecord);
         }
 

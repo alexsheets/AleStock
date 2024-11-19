@@ -22,18 +22,20 @@ namespace AleStock.Models
         public string TotalAssets { get; set; }
         public string TotalLiabilities { get; set; }
         public string TotalEquity { get; set; }
+        public string TotalDebt { get; set; }
 
-        // metrics
+        // profit metrics
         public string GrossProfitMargin { get; set; }
         public string OperatingMargin { get; set; }
         public string NetProfitMargin { get; set; }
         public float ReturnOnEquity { get; set; }
         public float ReturnOnAssets { get; set; }
         public float ReturnOnInvested { get; set; }
+
+        // other metrics
         public float LiquidityRatio { get; set; }
         public float LiabilitiesToEquityRatio { get; set; }
         public float DebtRatio { get; set; }
-        public string TotalDebt {  get; set; }
         public float DividendPayoutRatio { get; set; }
 
         // company cash flow

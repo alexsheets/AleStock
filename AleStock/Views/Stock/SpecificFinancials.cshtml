@@ -1,5 +1,145 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@using Kendo.Mvc.UI;
+@model AleStock.Models.StockEconomicalInfo
+
+<style>
+
+    #StockReportView {
+        margin-top: 7%;
+        padding-bottom: 7%;
+        text-align: center !important;
+    }
+
+    label {
+        display: block;
+    }
+
+    .inputDiv1 {
+        display: inline-block;
+    }
+
+    .h2 {
+        display: inline-block;
+        text-align: center !important;
+    }
+
+</style>
+
+
+<div id="StockReportView" class="text-center" style="margin-top:4%;">
+
+    @if (TempData["ValidationMsg"] != null)
+    {
+        <div class="form-row" id="AlertDiv">
+            <div class="alert alert-danger text-center" style="width:400px;margin:0 auto;margin-top:2%;" role="alert">
+                @TempData["ValidationMsg"]
+            </div>
+        </div>
+    }
+
+    <h4 style="margin-top:3%;text-decoration:underline;">Quick Stock Report</h4>
+
+    <p><center><hr width="75%" /></center></p>
+    <p>
+        <label>Ticker, Quarter and Year of financials requested:</label>
+        <div class="inputDiv2">
+            @Model.Ticker, @Model.Quarter, @Model.Year
+        </div>
+    </p>
+    <p>
+        <label>Company balance review:</label>
+        <div class="inputDiv2">
+            Total Assets: @Model.TotalAssets
+        </div>
+        <div class="inputDiv2">
+            Total Liabilities: @Model.TotalLiabilities
+        </div>
+        <div class="inputDiv2">
+            Total Equity: @Model.TotalEquity
+        </div>
+        <div class="inputDiv2">
+            Total Debt: @Model.TotalDebt
+        </div>
+    </p>
+    <p>
+        <label>Company cash flow:</label>
+        <div class="inputDiv2">
+            Dividends Paid: @Model.DividendsPaid
+        </div>
+        <div class="inputDiv2">
+            Net cash from operating: @Model.NetCashOperating
+        </div>
+        <div class="inputDiv2">
+            Net cash from investing: @Model.NetCashInvesting
+        </div>
+        <div class="inputDiv2">
+            Net change in cash: @Model.NetCashDelta
+        </div>
+    </p>
+    <p>
+        <label>Profit metrics:</label>
+        <div class="inputDiv2">
+            Gross Profit Margin: @Model.GrossProfitMargin
+        </div>
+        <div class="inputDiv2">
+            Net Profit Margin: @Model.NetProfitMargin
+        </div>
+        <div class="inputDiv2">
+            Operating Margin: @Model.OperatingMargin
+        </div>
+        <label>Return metrics:</label>
+        <div class="inputDiv2">
+            Return on Assets: @Model.ReturnOnAssets
+        </div>
+        <div class="inputDiv2">
+            Return on Equity: @Model.ReturnOnEquity
+        </div>
+        <div class="inputDiv2">
+            Return on Investments: @Model.ReturnOnInvested
+        </div>
+    </p>
+    <p>
+        <label>Profit metrics:</label>
+        <div class="inputDiv2">
+            Gross Profit Margin: @Model.GrossProfitMargin
+        </div>
+        <div class="inputDiv2">
+            Net Profit Margin: @Model.NetProfitMargin
+        </div>
+        <div class="inputDiv2">
+            Operating Margin: @Model.OperatingMargin
+        </div>
+        <label>Return metrics:</label>
+        <div class="inputDiv2">
+            Return on Assets: @Model.ReturnOnAssets
+        </div>
+        <div class="inputDiv2">
+            Return on Equity: @Model.ReturnOnEquity
+        </div>
+        <div class="inputDiv2">
+            Return on Investments: @Model.ReturnOnInvested
+        </div>
+    </p>
+    <p>
+        <label>Other important metrics:</label>
+        <div class="inputDiv2">
+            Liquidity Ratio: @Model.LiquidityRatio
+        </div>
+        <div class="inputDiv2">
+            Liabilities to Equity ratio: @Model.LiabilitiesToEquityRatio
+        </div>
+        <div class="inputDiv2">
+            Debt ratio: @Model.DebtRatio
+        </div>
+        <div class="inputDiv2">
+            Dividend Payout ratio: @Model.DividendPayoutRatio
+        </div>
+    </p>
+
+    
+
+
+
+
+    
+
+</div>
