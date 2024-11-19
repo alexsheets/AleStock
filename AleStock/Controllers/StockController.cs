@@ -6,6 +6,7 @@ using Kendo.Mvc.UI;
 using AleStock.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Supabase.Postgrest;
+using Ale.Models;
 
 namespace AleStock.Controllers
 {
@@ -13,6 +14,11 @@ namespace AleStock.Controllers
     {
 
         IHttpContextAccessor _httpContextAccessor = new HttpContextAccessor();
+
+        // instantiate db context 
+        StockDbContext _dbContext;
+        // create supabase client and init connection string
+        public StockController(StockDbContext context) => _dbContext = context;
 
         /*
          * Functions simply for returning the associated views
