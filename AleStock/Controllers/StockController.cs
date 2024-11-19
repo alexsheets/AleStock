@@ -17,26 +17,17 @@ namespace AleStock.Controllers
 
         // instantiate db context 
         StockDbContext _dbContext;
+
         // create supabase client and init connection string
         public StockController(StockDbContext context) => _dbContext = context;
+
 
         /*
          * Functions simply for returning the associated views
          */
+
         public IActionResult Index()
         {
-            return View();
-        }
-
-        public IActionResult SpecificFinancials()
-        {
-            // process in vars set earlier
-            String tick = _httpContextAccessor.HttpContext.Session.GetString("Ticker");
-            String quarter = _httpContextAccessor.HttpContext.Session.GetString("Quarter");
-            String year = _httpContextAccessor.HttpContext.Session.GetString("Year");
-
-            // retrieve model associated
-
             return View();
         }
 
@@ -50,6 +41,7 @@ namespace AleStock.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
 
         // helper functions to return all potential years and quarters for reviewing financials
         public JsonResult getYears()
@@ -96,9 +88,43 @@ namespace AleStock.Controllers
             }
         }
 
-        // function which takes in the initial report choices, generates the report and returns view
+
+        // function to retrieve the financial information of a single stock record
+        [HttpGet]
+        public async Task<ActionResult<StockEconomicalInfo>> SpecificFinancials()
+        {
+            // process in vars set earlier
+            String tick = _httpContextAccessor.HttpContext.Session.GetString("Ticker");
+            String quarter = _httpContextAccessor.HttpContext.Session.GetString("Quarter");
+            String yr_str = _httpContextAccessor.HttpContext.Session.GetString("Year");
+            int year = Int32.Parse(yr_str);
+
+            // retrieve model associated
+            StockEconomicalInfo stockRecord = await _dbContext.GetSpecificStockReport(tick, quarter, year);
+
+
+
+            return View(stockRecord);
+        }
+
+        // helper func to recognize whether this stock economical record has been created in DB yet
+        public async Task<StockEconomicalInfo> CheckExistence(string tick, string quarter, int year)
+        {
+            // retrieve model associated
+            StockEconomicalInfo stockRecord = await _dbContext.GetSpecificStockReport(tick, quarter, year);
+
+            if (stockRecord != null)
+            {
+                return stockRecord;
+            } else
+            {
+                return new StockEconomicalInfo();
+            }
+        }
+
+        // function which takes in the initial report choices, generates the report (if it hasnt already been processed to DB) and returns view
         [HttpPost]
-        public ActionResult SubmitInitReportChoices([DataSourceRequest] DataSourceRequest request, StockChoicesViewModel model)
+        public async Task<ActionResult> SubmitInitReportChoices([DataSourceRequest] DataSourceRequest request, StockChoicesViewModel model)
         {
 
             // set vars in http context to access them later
@@ -106,11 +132,15 @@ namespace AleStock.Controllers
             _httpContextAccessor.HttpContext.Session.SetString("Quarter", model.Quarter.ToString());
             _httpContextAccessor.HttpContext.Session.SetString("Year", model.Year.ToString());
 
-            RunScript(@"Scripts\simfin.py", model.Ticker, model.Quarter, model.Year);
+            StockEconomicalInfo init_record = await CheckExistence(model.Ticker, model.Quarter, model.Year);
 
-            // receives results and processes them to db
+            if (init_record == null)
+            {
+                // retrieves info and processes to db
+                RunScript(@"Scripts\simfin.py", model.Ticker, model.Quarter, model.Year);
+            } 
+
             // send to page to view results
-
             return View("SpecificFinancials");
 
         }
