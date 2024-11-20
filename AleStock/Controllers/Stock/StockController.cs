@@ -127,6 +127,7 @@ namespace AleStock.Controllers.Stock
         {
 
             // set vars in http context to access them later
+            _httpContextAccessor.HttpContext.Session.SetString("APIKey", model.APIKey.ToString());
             _httpContextAccessor.HttpContext.Session.SetString("Ticker", model.Ticker.ToString());
             _httpContextAccessor.HttpContext.Session.SetString("Quarter", model.Quarter.ToString());
             _httpContextAccessor.HttpContext.Session.SetString("Year", model.Year.ToString());
@@ -136,7 +137,7 @@ namespace AleStock.Controllers.Stock
             if (init_record == null)
             {
                 // retrieves info and processes to db
-                RunScript(@"Scripts\simfin.py", model.Ticker, model.Quarter, model.Year);
+                RunScript(@"Scripts\simfin.py", model.APIKey, model.Ticker, model.Quarter, model.Year);
             }
 
             // send to page to view results
@@ -145,7 +146,7 @@ namespace AleStock.Controllers.Stock
         }
 
         // function to run the pythonNet script and run simfin script with necessary user-submitted variables
-        static void RunScript(string script, string ticker_submitted, string quarter_submitted, int year_submitted)
+        static void RunScript(string script, string api_key, string ticker_submitted, string quarter_submitted, int year_submitted)
         {
             Runtime.PythonDLL = @"C:\Users\asheet3\.nuget\packages\pythonnet\3.0.4\lib\netstandard2.0\Python.Runtime.dll";
             PythonEngine.Initialize();
@@ -153,16 +154,24 @@ namespace AleStock.Controllers.Stock
             // acquire GIL 
             using (Py.GIL())
             {
+                var key = new PyString(api_key);
                 var ticker = new PyString(ticker_submitted);
                 var quarter = new PyString(quarter_submitted);
                 var year = new PyInt(year_submitted);
 
-                var pyScript = Py.Import(script);
-                var result = pyScript.InvokeMethod("convert_to_json", new PyObject[] { ticker, quarter, year });
+                dynamic api_class = Py.Import("simfin_api").GetAttr("SimFinAPI");
+                // API KEY GOES HERE
+                dynamic simfin_instance = api_class(key);
+
+                // var pyScript = Py.Import(script);
+#pragma warning disable IDE0300 // Simplify collection initialization
+                var result = simfin_instance.InvokeMethod("convert_to_json", new PyObject[] { ticker, year, quarter });
+#pragma warning restore IDE0300 // Simplify collection initialization
 
                 if (result != null)
                 {
                     // process result here
+                    // final result is a json response
                 }
 
             }

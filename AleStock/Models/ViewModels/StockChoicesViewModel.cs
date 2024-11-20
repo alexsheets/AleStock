@@ -10,5 +10,7 @@ namespace AleStock.Models.ViewModels
         public string Quarter { get; set; }
         [Required]
         public int Year { get; set; }
+        [Required]
+        public string APIKey { get; set; }
     }
 }

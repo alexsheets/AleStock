@@ -43,6 +43,14 @@
         // choose quarter and year
 
         <div class="inputDiv1">
+            <label>First, paste your API key from Simfin (including dashes):</label>
+            @Html.Kendo().TextBoxFor(e => e.APIKey)
+        </div>
+
+        @Html.Raw("<br />")
+        @Html.Raw("<br />")
+
+        <div class="inputDiv1">
             <label>Type in ticker:</label>
             @Html.Kendo().TextBoxFor(e => e.Ticker)
         </div>
