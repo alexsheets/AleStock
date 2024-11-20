@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Supabase.Postgrest;
 using Ale.Models;
 
-namespace AleStock.Controllers
+namespace AleStock.Controllers.Stock
 {
     public class StockController : Controller
     {
@@ -94,10 +94,10 @@ namespace AleStock.Controllers
         public async Task<ActionResult<StockEconomicalInfo>> SpecificFinancials()
         {
             // process in vars set earlier
-            String tick = _httpContextAccessor.HttpContext.Session.GetString("Ticker");
-            String quarter = _httpContextAccessor.HttpContext.Session.GetString("Quarter");
-            String yr_str = _httpContextAccessor.HttpContext.Session.GetString("Year");
-            int year = Int32.Parse(yr_str);
+            string tick = _httpContextAccessor.HttpContext.Session.GetString("Ticker");
+            string quarter = _httpContextAccessor.HttpContext.Session.GetString("Quarter");
+            string yr_str = _httpContextAccessor.HttpContext.Session.GetString("Year");
+            int year = int.Parse(yr_str);
 
             // retrieve model associated
             StockEconomicalInfo stockRecord = await _dbContext.GetSpecificStockReport(tick, quarter, year);
@@ -114,7 +114,8 @@ namespace AleStock.Controllers
             if (stockRecord != null)
             {
                 return stockRecord;
-            } else
+            }
+            else
             {
                 return new StockEconomicalInfo();
             }
@@ -136,7 +137,7 @@ namespace AleStock.Controllers
             {
                 // retrieves info and processes to db
                 RunScript(@"Scripts\simfin.py", model.Ticker, model.Quarter, model.Year);
-            } 
+            }
 
             // send to page to view results
             return View("SpecificFinancials");
@@ -163,7 +164,7 @@ namespace AleStock.Controllers
                 {
                     // process result here
                 }
-                
+
             }
         }
 
