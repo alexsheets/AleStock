@@ -4,10 +4,9 @@ Current Buildout:
 
 --> Users can supply their own SimFin API key and other relevant information to retain full financials of any stock
 
-
 --> Reports are stored in database after being requested once in order for quicker retrieval/less network requests
 
---> Database linked to free database service Supabase. Project full setup of Supabase connection in an ASP.NET project which proved difficult to find online.
+--> Database linked to free database service Supabase. Project contains full setup of Supabase connection in an ASP.NET project which proved difficult to find online.
 
 --> Simfin API written in Python and fully tested. Deployed using PythonNET which can run Python code within .NET projects
 
