@@ -1,9 +1,13 @@
 using Ale.Models;
+using AleStock.Hubs;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+// add c# chat package
+builder.Services.AddSignalR();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews().AddNewtonsoftJson(o => o.SerializerSettings.ContractResolver = new DefaultContractResolver());
@@ -45,7 +49,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-
+app.MapHub<ChatHub>("/Chat");
 
 
 app.Run();

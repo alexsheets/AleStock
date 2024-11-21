@@ -123,7 +123,7 @@ namespace AleStock.Controllers.Stock
 
         // function which takes in the initial report choices, generates the report (if it hasnt already been processed to DB) and returns view
         [HttpPost]
-        public async Task<ActionResult> SubmitInitReportChoices([DataSourceRequest] DataSourceRequest request, StockChoicesViewModel model)
+        public async Task<ActionResult> SubmitStockChoices([DataSourceRequest] DataSourceRequest request, StockChoicesViewModel model)
         {
 
             // set vars in http context to access them later
@@ -159,7 +159,7 @@ namespace AleStock.Controllers.Stock
                 var quarter = new PyString(quarter_submitted);
                 var year = new PyInt(year_submitted);
 
-                dynamic api_class = Py.Import("simfin_api").GetAttr("SimFinAPI");
+                dynamic api_class = Py.Import(script).GetAttr("SimFinAPI");
                 // API KEY GOES HERE
                 dynamic simfin_instance = api_class(key);
 
