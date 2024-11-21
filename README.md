@@ -8,6 +8,6 @@ Current Buildout:
 
 --> Database linked to free database service Supabase. Project contains full setup of Supabase connection in an ASP.NET project which proved difficult to find online.
 
---> Simfin API written in Python and fully tested. Deployed using PythonNET which can run Python code within .NET projects
+--> Simfin API written in Python and fully tested. Deployed using PythonNET which can run Python code within .NET projects. Requests use urllib package.
 
 --> Chat built using C# SignalR package
