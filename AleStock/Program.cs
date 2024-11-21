@@ -2,6 +2,7 @@ using Ale.Models;
 using AleStock.Hubs;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
+using AleStock.Hubs;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -49,6 +50,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+// setup for chat endpoint
 app.MapHub<ChatHub>("/Chat");
 
 
