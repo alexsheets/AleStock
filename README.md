@@ -10,4 +10,4 @@ Current Buildout:
 
 --> Simfin API written in Python and fully tested. Deployed using PythonNET which can run Python code within .NET projects. Requests use urllib package.
 
---> Chat built using C# SignalR package
+--> Chat built using C# SignalR package. Currently allows for general messaging, private messaging, and group messaging.
