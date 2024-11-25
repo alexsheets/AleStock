@@ -1,0 +1,10 @@
+﻿--> create function to break apart JSON response and store/view it
+--> prettify the chat functionality
+
+--> implement user accounts/auth
+
+
+
+IDEAS:
+--> allow users to set weights on the financial report to give the stock a certain score as to whether it suits their wants
+--> - implement different AI models on stock for different periods (volatility) to create predicted values based on the stocks chart/data
