@@ -70,35 +70,12 @@ public partial class StockDbContext : DbContext
     }
 
     // INSERT DB operations
-    public async void SubmitStockReport(string ticker, string quarter, int year, string totalAssets, string totalLiabilities, string totalEquity, string grossProfitMargin, string operatingMargin, string netProfitMargin,
-        float returnOnEquity, float returnOnAssets, float returnOnInvested, float liquidityRatio, float liabilitiesToEquityRatio, float debtRatio, string totalDebt, float dividendPayoutRatio, float dividendsPaid, 
-        string netCashOperating, string netCashInvesting, string netCashFinancing, string netCashDelta)
+    public async 
+    // INSERT DB operations
+    Task
+SubmitStockReport(StockEconomicalInfo model)
     {
-        var model = new StockEconomicalInfo()
-        {
-            Ticker = ticker,
-            Quarter = quarter,
-            Year = year,
-            TotalAssets = totalAssets,
-            TotalLiabilities = totalLiabilities,
-            TotalEquity = totalEquity,
-            GrossProfitMargin = grossProfitMargin,
-            OperatingMargin = operatingMargin,
-            NetProfitMargin = netProfitMargin,
-            ReturnOnEquity = returnOnEquity,
-            ReturnOnAssets = returnOnAssets,
-            ReturnOnInvested = returnOnInvested,
-            LiquidityRatio = liquidityRatio,
-            LiabilitiesToEquityRatio = liabilitiesToEquityRatio,
-            DebtRatio = debtRatio,
-            TotalDebt = totalDebt,
-            DividendPayoutRatio = dividendPayoutRatio,
-            DividendsPaid = dividendsPaid,
-            NetCashOperating = netCashOperating,
-            NetCashInvesting = netCashInvesting,
-            NetCashFinancing = netCashFinancing,
-            NetCashDelta = netCashDelta
-        };
+        
 
         var result = await _supabaseClient.From<StockEconomicalInfo>().Insert(model);
         

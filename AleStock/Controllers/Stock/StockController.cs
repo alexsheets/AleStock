@@ -9,6 +9,8 @@ using Supabase.Postgrest;
 using Ale.Models;
 using Newtonsoft.Json.Linq;
 using Telerik.SvgIcons;
+using Microsoft.AspNetCore.JsonPatch.Operations;
+using System.Security.Policy;
 
 namespace AleStock.Controllers.Stock
 {
@@ -134,12 +136,14 @@ namespace AleStock.Controllers.Stock
             _httpContextAccessor.HttpContext.Session.SetString("Quarter", model.Quarter.ToString());
             _httpContextAccessor.HttpContext.Session.SetString("Year", model.Year.ToString());
 
-            StockEconomicalInfo init_record = await CheckExistence(model.Ticker, model.Quarter, model.Year);
+            int year_int = Int32.Parse(model.Year.ToString());
+
+            StockEconomicalInfo init_record = await CheckExistence(model.Ticker, model.Quarter, year_int);
 
             if (init_record == null)
             {
                 // retrieves info and processes to db
-                RunScript(@"Scripts\simfin.py", model.APIKey, model.Ticker, model.Quarter, model.Year);
+                RunScript(@"Scripts\simfin.py", model.APIKey, model.Ticker, model.Quarter, year_int);
             }
 
             // send to page to view results
@@ -148,7 +152,7 @@ namespace AleStock.Controllers.Stock
         }
 
         // function to run the pythonNet script and run simfin script with necessary user-submitted variables
-        static void RunScript(string script, string api_key, string ticker_submitted, string quarter_submitted, int year_submitted)
+        public async void RunScript(string script, string api_key, string ticker_submitted, string quarter_submitted, int year_submitted)
         {
             Runtime.PythonDLL = @"C:\Users\asheet3\.nuget\packages\pythonnet\3.0.4\lib\netstandard2.0\Python.Runtime.dll";
             PythonEngine.Initialize();
@@ -173,26 +177,75 @@ namespace AleStock.Controllers.Stock
                 if (result != null)
                 {
                     // process result here
-
-                    // instantiate stock record
-                    StockEconomicalInfo stockRecord = new StockEconomicalInfo();
                     
                     // ensure that it is in valid json by using newtonsoft JSON to create parsable json
                     var json_object = JObject.Parse(result);
 
                     // assign vars to object
-                    stockRecord.TotalAssets = json_object["Assets"]["Total Assets"];
-                    stockRecord.TotalLiabilities = json_object["Liabilities"]["Total Liabilities"];
-                    stockRecord.TotalEquity = json_object["Equity"]["Total Equity"];
-                    stockRecord.TotalDebt = json_object["Solvency Metrics"]["Total Debt"];
+                    string totalAssets = json_object["Assets"]["Total Assets"];
+                    string totalLiabilities = json_object["Liabilities"]["Total Liabilities"];
+                    string totalEquity = json_object["Equity"]["Total Equity"];
+                    string totalDebt = json_object["Solvency Metrics"]["Total Debt"];
 
-                    stockRecord.GrossProfitMargin = json_object["Profitability Metrics"]["Gross Profit Margin"];
+                    string grossProfitMargin = json_object["Profitability Metrics"]["Gross Profit Margin"];
+                    string operatingMargin = json_object["Profitability Metrics"]["Operating Margin"];
+                    string netProfitMargin = json_object["Profitability Metrics"]["Net Profit Margin"];
+                    string returnOnEquity = json_object["Profitability Metrics"]["Return on Equity"];
+                    string returnOnAssets = json_object["Profitability Metrics"]["Return on Assets"];
+                    string returnOnInvested = json_object["Profitability Metrics"]["Return on Invested Capital"];
 
+                    string liquidityRatio = json_object["Liquidity Metrics"]["Current Ratio"];
+                    string liabilitiesToEquityRatio = json_object["Solvency Metrics"]["Liabilities to Equity Ratio"];
+                    string debtRatio = json_object["Solvency Metrics"]["Debt Ratio"];
+                    string dividendPayoutRatio = json_object["Other Important Metrics"]["Dividend Payout Ratio"];
 
+                    string dividendsPaid = json_object["Financing Activities"]["Dividends Paid"];
+                    string netCashOperating = json_object["Operating Activities"]["Net Cash from Operating Activities"];
+                    string netCashInvesting = json_object["Investing Activities"]["Net Cash from Investing Activities"];
+                    string netCashFinancing = json_object["Financing Activities"]["Net Cash from Financing Activities"];
+                    string netCashDelta = json_object["Net Change"]["Net Change in Cash"];
+
+                    await CreateStockReport(ticker_submitted, quarter_submitted, year_submitted, totalAssets, totalLiabilities, totalEquity, grossProfitMargin, operatingMargin, netProfitMargin, returnOnEquity,
+                        returnOnAssets, returnOnInvested, liquidityRatio, liabilitiesToEquityRatio, debtRatio, totalDebt, dividendPayoutRatio, dividendsPaid, netCashOperating, netCashInvesting, netCashFinancing, netCashDelta);
 
                 }
-
             }
+        }
+
+        public async Task<ActionResult> CreateStockReport(string ticker, string quarter, int year, string totalAssets, string totalLiabilities, string totalEquity, string grossProfitMargin, string operatingMargin,
+                string netProfitMargin, string returnOnEquity, string returnOnAssets, string returnOnInvested, string liquidityRatio, string liabilitiesToEquityRatio, string debtRatio, string totalDebt, string dividendPayoutRatio,
+                string dividendsPaid, string netCashOperating, string netCashInvesting, string netCashFinancing, string netCashDelta)
+        {
+
+            var model = new StockEconomicalInfo()
+            {
+                Ticker = ticker,
+                Quarter = quarter,
+                Year = year,
+                TotalAssets = totalAssets,
+                TotalLiabilities = totalLiabilities,
+                TotalEquity = totalEquity,
+                GrossProfitMargin = grossProfitMargin,
+                OperatingMargin = operatingMargin,
+                NetProfitMargin = netProfitMargin,
+                ReturnOnEquity = returnOnEquity,
+                ReturnOnAssets = returnOnAssets,
+                ReturnOnInvested = returnOnInvested,
+                LiquidityRatio = liquidityRatio,
+                LiabilitiesToEquityRatio = liabilitiesToEquityRatio,
+                DebtRatio = debtRatio,
+                TotalDebt = totalDebt,
+                DividendPayoutRatio = dividendPayoutRatio,
+                DividendsPaid = dividendsPaid,
+                NetCashOperating = netCashOperating,
+                NetCashInvesting = netCashInvesting,
+                NetCashFinancing = netCashFinancing,
+                NetCashDelta = netCashDelta
+            };
+
+            await _dbContext.SubmitStockReport(model);
+
+            return View("SpecificFinancials");
         }
 
     }
