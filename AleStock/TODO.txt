@@ -2,7 +2,7 @@
 --> prettify the chat functionality (potentially create react app on top of dotnet project)
 
 --> implement user accounts/auth
-
+--> add glossary of financial/stock terminology 
 
 
 IDEAS:

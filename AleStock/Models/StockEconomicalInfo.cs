@@ -28,18 +28,18 @@ namespace AleStock.Models
         public string GrossProfitMargin { get; set; }
         public string OperatingMargin { get; set; }
         public string NetProfitMargin { get; set; }
-        public float ReturnOnEquity { get; set; }
-        public float ReturnOnAssets { get; set; }
-        public float ReturnOnInvested { get; set; }
+        public string ReturnOnEquity { get; set; }
+        public string ReturnOnAssets { get; set; }
+        public string ReturnOnInvested { get; set; }
 
         // other metrics
-        public float LiquidityRatio { get; set; }
-        public float LiabilitiesToEquityRatio { get; set; }
-        public float DebtRatio { get; set; }
-        public float DividendPayoutRatio { get; set; }
+        public string LiquidityRatio { get; set; }
+        public string LiabilitiesToEquityRatio { get; set; }
+        public string DebtRatio { get; set; }
+        public string DividendPayoutRatio { get; set; }
 
         // company cash flow
-        public float DividendsPaid {  get; set; }
+        public string DividendsPaid {  get; set; }
         public string NetCashOperating { get; set; }
         public string NetCashInvesting { get; set; }
         public string NetCashFinancing { get; set; }

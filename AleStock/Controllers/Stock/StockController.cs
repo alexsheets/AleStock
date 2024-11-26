@@ -7,6 +7,8 @@ using AleStock.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Supabase.Postgrest;
 using Ale.Models;
+using Newtonsoft.Json.Linq;
+using Telerik.SvgIcons;
 
 namespace AleStock.Controllers.Stock
 {
@@ -171,7 +173,23 @@ namespace AleStock.Controllers.Stock
                 if (result != null)
                 {
                     // process result here
-                    // final result is a json response
+
+                    // instantiate stock record
+                    StockEconomicalInfo stockRecord = new StockEconomicalInfo();
+                    
+                    // ensure that it is in valid json by using newtonsoft JSON to create parsable json
+                    var json_object = JObject.Parse(result);
+
+                    // assign vars to object
+                    stockRecord.TotalAssets = json_object["Assets"]["Total Assets"];
+                    stockRecord.TotalLiabilities = json_object["Liabilities"]["Total Liabilities"];
+                    stockRecord.TotalEquity = json_object["Equity"]["Total Equity"];
+                    stockRecord.TotalDebt = json_object["Solvency Metrics"]["Total Debt"];
+
+                    stockRecord.GrossProfitMargin = json_object["Profitability Metrics"]["Gross Profit Margin"];
+
+
+
                 }
 
             }
