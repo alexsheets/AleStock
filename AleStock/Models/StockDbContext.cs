@@ -70,15 +70,9 @@ public partial class StockDbContext : DbContext
     }
 
     // INSERT DB operations
-    public async 
-    // INSERT DB operations
-    Task
-SubmitStockReport(StockEconomicalInfo model)
+    public async Task SubmitStockReport(StockEconomicalInfo model)
     {
-        
-
         var result = await _supabaseClient.From<StockEconomicalInfo>().Insert(model);
-        
     }
 
 }
