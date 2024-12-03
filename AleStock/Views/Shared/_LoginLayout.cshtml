@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Login</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <link rel="stylesheet" href="~/css/open-iconic/font/css/open-iconic-bootstrap.min.css" asp-append-version="true" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+
+</head>
+<body>
+    <div class="page">
+        <div class="sidebar">
+            <div class="top-row navbar navbar-dark">
+                <div class="top-row">
+                    <p class="text-center">
+                        <span>AleStock</span>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="content px-4">
+            @RenderBody()
+        </div>
+
+    </div>
+
+</body>
+</html>

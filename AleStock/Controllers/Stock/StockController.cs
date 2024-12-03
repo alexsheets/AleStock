@@ -30,7 +30,7 @@ namespace AleStock.Controllers.Stock
          * Functions simply for returning the associated views
          */
 
-        public IActionResult Index()
+        public IActionResult FinanceAnalyzation()
         {
             return View();
         }
