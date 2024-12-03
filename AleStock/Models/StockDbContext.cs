@@ -5,6 +5,8 @@ using AleStock.Models;
 using Microsoft.EntityFrameworkCore;
 using Telerik.SvgIcons;
 using Supabase;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 // using Supabase.Postgrest;
 // using Supabase.Interfaces;
 
@@ -70,9 +72,20 @@ public partial class StockDbContext : DbContext
     }
 
     // INSERT DB operations
-    public async Task SubmitStockReport(StockEconomicalInfo model)
+    public async Task<HttpResponseMessage?> SubmitStockReport(StockEconomicalInfo model)
     {
         var result = await _supabaseClient.From<StockEconomicalInfo>().Insert(model);
+        return result.ResponseMessage;
+    }
+
+    public async Task CreateUser(string email, string password)
+    {
+        var session = await _supabaseClient.Auth.SignUp(email, password);   
+    }
+
+    public async Task SignIn(string email, string password)
+    {
+        var session = await _supabaseClient.Auth.SignIn(email, password);
     }
 
 }

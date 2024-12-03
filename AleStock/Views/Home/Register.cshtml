@@ -1,5 +1,63 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model AleStock.Models.SignIn
 @{
+    ViewBag.Title = "Sign In";
+    Layout = "_LoginLayout";
 }
+
+<style>
+
+    #signInBtnDiv {
+        width: 100px;
+        margin: 0 auto;
+        margin-top: 8%;
+    }
+
+    #signInBtn {
+        width: 80px;
+        margin: 0 auto;
+    }
+
+    h4 {
+        text-decoration: underline;
+        margin-bottom: 8%;
+    }
+
+    a {
+        text-align: center;
+    }
+
+</style>
+
+<div>
+    @using (Html.BeginForm("Register", "Home", FormMethod.Post))
+    {
+
+        <div id="signInFormDiv">
+
+            <div>
+                <label for="UserName">Username</label>
+                @Html.TextBoxFor(u => u.Username, new { @class = "form-control form-control-sm", @placeholder = "Email", autocomplete = "off" })
+            </div>
+            <div style="margin-top: 3%;">
+                <label for="Password">Password</label>
+                @Html.PasswordFor(u => u.Password, new { @class = "form-control form-control-sm", @placeholder = "Password", autocomplete = "off" })
+            </div>
+
+            <div id="signInBtnDiv">
+                <button type="submit" class="k-button k-primary" id="signInBtn">Register</button>
+            </div>
+
+        </div>
+
+        if (TempData["ValidationMsg"] != null)
+        {
+            <div id="signInValid">
+                <div class="alert alert-danger text-center" role="alert">
+                    @TempData["ValidationMsg"]
+                </div>
+            </div>
+        }
+
+    }
+
+</div>
