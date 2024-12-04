@@ -4,7 +4,7 @@ Current Buildout:
 
 --> Users can supply their own API key for multiple websites (SimFin, Marketstack) to view stock information. Deployed using PythonNET which can run Python code within .NET projects. Requests use urllib package.
 
---> Reports are stored in database after being requested once in order for quicker retrieval/less network requests.
+--> Stock finance reports are stored in database after being requested once in order for quicker retrieval/less network requests.
 
 --> DB linked to free database service Supabase. Project contains full setup of Supabase connection in an ASP.NET project which proved difficult to find online. Includes login and registration to use Supabase auth system as usage of the Supabase project is not authorized without being saved to the associated users table.
 
