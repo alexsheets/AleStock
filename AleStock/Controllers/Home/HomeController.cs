@@ -1,6 +1,7 @@
 ﻿using Ale.Models;
 using AleStock.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Mail;
 
 namespace AleStock.Controllers.Home
 {
@@ -48,6 +49,47 @@ namespace AleStock.Controllers.Home
 
             return View("FinanceAnalyzation", "Stock");
 
+        }
+
+        [HttpPost]
+        public ActionResult SendEmail(SignIn credentials)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+
+
+                    var senderEmail = new MailAddress("");
+                    var receiverEmail = new MailAddress(credentials.Username);
+                    var body = "";
+                    var smtp = new SmtpClient
+                    {
+                        Host = "",
+                        Port = 2,
+                        EnableSsl = true,
+                        DeliveryMethod = SmtpDeliveryMethod.Network,
+                        UseDefaultCredentials = true,
+                        // Credentials = new NetworkCredential(senderEmail.Address, password)
+                    };
+                    using (var mess = new MailMessage(senderEmail, receiverEmail)
+                    {
+                        Subject = "New user information",
+                        Body = body
+                    })
+                    {
+                        smtp.Send(mess);
+                    }
+                    TempData["ValidationMsg"] = "Email successfully sent.";
+                    return View("Index");
+                }
+            }
+            catch (Exception)
+            {
+                TempData["ValidationMsg"] = "Error occurred.";
+                return View("Index");
+            }
+            return View("Index");
         }
     }
 }

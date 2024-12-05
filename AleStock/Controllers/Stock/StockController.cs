@@ -169,10 +169,18 @@ namespace AleStock.Controllers.Stock
                 // API KEY GOES HERE
                 dynamic simfin_instance = api_class(key);
 
-                // var pyScript = Py.Import(script);
 #pragma warning disable IDE0300 // Simplify collection initialization
                 var result = simfin_instance.InvokeMethod("convert_to_json", new PyObject[] { ticker, year, quarter });
 #pragma warning restore IDE0300 // Simplify collection initialization
+
+
+
+                //dynamic api = Py.Import(script);
+                //dynamic simfin_instance = api.SimFinAPI(key);
+
+                //var result = simfin_instance.convert_to_json(ticker, year, quarter);
+
+
 
                 if (result != null)
                 {
