@@ -24,6 +24,18 @@ class MarketStackAPI:
     
     def get_eod_dict(data):
         ret_data = data['history']
+        date_keys = ret_data.keys()
+        date_keys.sort()
+        
+        volumes = []
+        closing_prices = []
+        
+        for date in date_keys:
+            closing_prices.append(float(data[date]['close']))
+            volumes.append(float(data[date]['volume']))
+            
+        ret_dict = { "dates": date_keys, "closing_prices": closing_prices, "volumes": volumes }
+        return ret_dict
         
     def get_json_intraday(self, ticker, interval, date_start, date_end):
         params = f'?access_key={self.key}&exchange=IEXG&symbols={ticker}&interval={interval}&date_from={date_start}&date_to={date_end}'
@@ -39,6 +51,18 @@ class MarketStackAPI:
     
     def get_intra_dict(data):
         ret_data = data['intraday']
+        date_keys = ret_data.keys()
+        date_keys.sort()
+        
+        volumes = []
+        closing_prices = []
+        
+        for date in date_keys:
+            closing_prices.append(float(data[date]['close']))
+            volumes.append(float(data[date]['volume']))
+            
+        ret_dict = { "dates": date_keys, "closing_prices": closing_prices, "volumes": volumes }
+        return ret_dict
     
     def get_json_splits(self, ticker):
         params = f'?access_key={self.key}&symbols={ticker}'
