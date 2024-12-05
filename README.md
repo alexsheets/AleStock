@@ -2,12 +2,24 @@ AleStock is a portfolio project I am currently working on to combine skills of w
 
 Current Buildout:
 
---> Users can supply their own SimFin API key and other relevant information to retain full financials of any stock
+--> Users can supply their own API key for multiple websites (SimFin, Marketstack) to view stock information. Deployed using PythonNET which can run Python code within .NET projects. Requests use urllib package.
 
---> Reports are stored in database after being requested once in order for quicker retrieval/less network requests
+--> Stock finance reports are stored in database after being requested once in order for quicker retrieval/less network requests.
 
---> Database linked to free database service Supabase. Project contains full setup of Supabase connection in an ASP.NET project which proved difficult to find online.
+--> DB linked to free database service Supabase. Project contains full setup of Supabase connection in an ASP.NET project which proved difficult to find online. Includes login and registration to use Supabase auth system as usage of the Supabase project is not authorized without being saved to the associated users table.
 
---> Simfin API written in Python and fully tested. Deployed using PythonNET which can run Python code within .NET projects. Requests use urllib package.
+--> Chat built using C# SignalR package. Currently allows for general messaging, private messaging, and group messaging. Would like to build out a react chat application in the future to be on top of the ASP.NET project.
 
---> Chat built using C# SignalR package. Currently allows for general messaging, private messaging, and group messaging.
+In Progress:
+
+--> Adding Marketstack API so that users may see stock prices and other information
+
+--> Adding functionality for ML regressions and predictions
+
+--> Adding Yahoo API for stock information
+
+Future Ideas:
+
+--> Adding stock backtesting
+
+--> Adding 'paper trading' ability
