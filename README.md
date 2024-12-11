@@ -8,18 +8,22 @@ Current Buildout:
 
 --> DB linked to free database service Supabase. Project contains full setup of Supabase connection in an ASP.NET project which proved difficult to find online. Includes login and registration to use Supabase auth system as usage of the Supabase project is not authorized without being saved to the associated users table.
 
---> Chat built using C# SignalR package. Currently allows for general messaging, private messaging, and group messaging. Would like to build out a react chat application in the future to be on top of the ASP.NET project.
+--> Chat built using C# SignalR package. Currently allows for general messaging, private messaging, and group messaging.
 
 In Progress:
 
---> Adding Marketstack API so that users may see stock prices and other information
+--> Finishing up addition of Marketstack API
 
 --> Adding functionality for ML regressions and predictions
 
---> Adding Yahoo API for stock information
+--> Adding Yahoo API for stock information and news
 
 Future Ideas:
 
 --> Adding stock backtesting
+
+--> Adding overarching stock lookup which returns potent information regarding a specific stock
+
+--> Would like to build out a react chat application in the future to be on top of the ASP.NET project
 
 --> Adding 'paper trading' ability
