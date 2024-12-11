@@ -10,11 +10,7 @@ namespace AleStock.Controllers.Home
 
         IHttpContextAccessor _httpContextAccessor = new HttpContextAccessor();
 
-        // instantiate db context 
-        StockDbContext _dbContext;
-
-        // create supabase client and init connection string
-        public HomeController(StockDbContext context) => _dbContext = context;
+        StockDbContext _dbContext = new StockDbContext();
 
         public IActionResult Index()
         {

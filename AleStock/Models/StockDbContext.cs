@@ -20,22 +20,16 @@ public partial class StockDbContext : DbContext
 
     private readonly Client _supabaseClient;
 
-    public StockDbContext(Client supabaseClient) : base()
-    {
-        _supabaseClient = supabaseClient;
+    public virtual DbSet<StockEconomicalInfo> StockEconomicalReports { get; set; }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
         var builder = new ConfigurationBuilder();
         builder.AddJsonFile("appsettings.json", optional: false);
 
         var _configuration = builder.Build();
 
         connString = _configuration.GetConnectionString("StockDb");
-    }
-
-    public virtual DbSet<StockEconomicalInfo> StockEconomicalReports { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
         optionsBuilder.UseNpgsql(connString, builder =>
         {
             builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);

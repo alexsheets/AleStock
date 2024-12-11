@@ -2,8 +2,8 @@ using Ale.Models;
 using AleStock.Hubs;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
-using AleStock.Hubs;
-
+using dotenv;
+using dotenv.net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,10 +21,18 @@ builder.Services.AddMvc();
 builder.Services.AddSession(o => o.IdleTimeout = TimeSpan.FromMinutes(500));
 builder.Services.AddHttpContextAccessor();
 
-// add database
-builder.Services.AddDbContextPool<StockDbContext>(opt =>
-    opt.UseNpgsql(builder.Configuration.GetConnectionString("StockDb")));
+DotEnv.Load();
 
+var url = Environment.GetEnvironmentVariable("SUPABASE_URL");
+var key = Environment.GetEnvironmentVariable("SUPABASE_KEY");
+
+var options = new Supabase.SupabaseOptions
+{
+    AutoConnectRealtime = true
+};
+
+var supabase = new Supabase.Client(url, key, options);
+await supabase.InitializeAsync();
 
 
 var app = builder.Build();

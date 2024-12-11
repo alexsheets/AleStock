@@ -19,12 +19,7 @@ namespace AleStock.Controllers.Stock
 
         IHttpContextAccessor _httpContextAccessor = new HttpContextAccessor();
 
-        // instantiate db context 
-        StockDbContext _dbContext;
-
-        // create supabase client and init connection string
-        public StockController(StockDbContext context) => _dbContext = context;
-
+        StockDbContext _dbContext = new StockDbContext();
 
         /*
          * Functions simply for returning the associated views
