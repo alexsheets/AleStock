@@ -20,6 +20,8 @@ In Progress:
 
 Future Ideas:
 
+--> Implement AI assistance
+
 --> Adding stock backtesting
 
 --> Adding overarching stock lookup which returns potent information regarding a specific stock
