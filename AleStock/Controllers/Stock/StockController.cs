@@ -90,12 +90,8 @@ namespace AleStock.Controllers.Stock
 
         // function to retrieve the financial information of a single stock record
         [HttpGet]
-        public async Task<ActionResult<StockEconomicalInfo>> SpecificFinancials()
+        public async Task<ActionResult<StockEconomicalInfo>> SpecificFinancials(string tick, string quarter, string yr_str)
         {
-            // process in vars set earlier
-            string tick = _httpContextAccessor.HttpContext.Session.GetString("Ticker");
-            string quarter = _httpContextAccessor.HttpContext.Session.GetString("Quarter");
-            string yr_str = _httpContextAccessor.HttpContext.Session.GetString("Year");
             int year = int.Parse(yr_str);
 
             // retrieve model associated
@@ -125,12 +121,6 @@ namespace AleStock.Controllers.Stock
         public async Task<ActionResult> SubmitStockChoices([DataSourceRequest] DataSourceRequest request, StockChoicesViewModel model)
         {
 
-            // set vars in http context to access them later
-            _httpContextAccessor.HttpContext.Session.SetString("APIKey", model.APIKey.ToString());
-            _httpContextAccessor.HttpContext.Session.SetString("Ticker", model.Ticker.ToString());
-            _httpContextAccessor.HttpContext.Session.SetString("Quarter", model.Quarter.ToString());
-            _httpContextAccessor.HttpContext.Session.SetString("Year", model.Year.ToString());
-
             int year_int = Int32.Parse(model.Year.ToString());
 
             StockEconomicalInfo init_record = await CheckExistence(model.Ticker, model.Quarter, year_int);
@@ -138,11 +128,11 @@ namespace AleStock.Controllers.Stock
             if (init_record == null)
             {
                 // retrieves info and processes to db
-                RunScript(@"Scripts\simfin.py", model.APIKey, model.Ticker, model.Quarter, year_int);
+                await RunScript(@"Scripts\simfin.py", model.APIKey, model.Ticker, model.Quarter, year_int);
             }
 
             // send to page to view results
-            return View("SpecificFinancials");
+            return RedirectToAction("SpecificFinancials", "Stock", new { tick=model.Ticker.ToString(), quarter=model.Quarter.ToString(), year=model.Year.ToString() });
 
         }
 
