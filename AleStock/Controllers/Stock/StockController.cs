@@ -123,6 +123,12 @@ namespace AleStock.Controllers.Stock
 
             int year_int = Int32.Parse(model.Year.ToString());
 
+            // set information in http session for retrieval if user chooses to do an AI summarization
+            _httpContextAccessor.HttpContext.Session.SetString("Quarter", model.Quarter.ToString());
+            _httpContextAccessor.HttpContext.Session.SetString("Ticker", model.Ticker.ToString());
+            _httpContextAccessor.HttpContext.Session.SetString("Year", model.Year.ToString());
+
+
             StockEconomicalInfo init_record = await CheckExistence(model.Ticker, model.Quarter, year_int);
 
             if (init_record == null)
@@ -212,5 +218,9 @@ namespace AleStock.Controllers.Stock
             }
         }
 
+        public async Task<ActionResult> GetAISummarization()
+        {
+
+        }
     }
 }
