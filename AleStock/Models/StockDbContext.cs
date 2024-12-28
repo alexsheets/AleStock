@@ -21,6 +21,7 @@ public partial class StockDbContext : DbContext
     private readonly Client _supabaseClient;
 
     public virtual DbSet<StockEconomicalInfo> StockEconomicalReports { get; set; }
+    public virtual DbSet<UserAPIKeys> APIKeyLookup { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -62,6 +63,17 @@ public partial class StockDbContext : DbContext
         catch (Exception ex)
         {
             return new StockEconomicalInfo();
+        }   
+    }
+
+    public async Task<UserAPIKeys> GetUserAPIKeys(string email) 
+    {
+        try 
+        {
+            var result = await _supabaseClient.From<UserAPIKeys>().Where(e => e.Email == email).Get();
+            return result.Model;
+        } catch (Exception ex) {
+            return new UserAPIKeys();
         }
     }
 
@@ -70,6 +82,11 @@ public partial class StockDbContext : DbContext
     {
         var result = await _supabaseClient.From<StockEconomicalInfo>().Insert(model);
         return result.ResponseMessage;
+    }
+
+    public async Task<HttpResponseMessage?> SubmitAPIKeys() 
+    {
+        // todo
     }
 
     public async Task CreateUser(string email, string password)

@@ -9,8 +9,9 @@ class OpenAI:
     
     def create_prompt(self):
         return """
-        You will act as a financial analyst. You will be given some financial information relating to any particular
-        company in JSON format. Analyze them and give some advice as to whether the company finds itself in good standing.
+        You will act as a financial analyst. You will be given some financial information relating to a particular
+        company in JSON format.
+        Analyze the information and give some advice as to whether the company finds itself in good standing.
         Explain the related financial concepts and what the amount of money associated means for the company. 
         You should try to relay the financial information in such a way that it is easily understandable,
         as if it were being written for someone who is a beginner in understanding the stock market.
