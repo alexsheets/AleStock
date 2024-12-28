@@ -45,6 +45,11 @@ namespace AleStock.Controllers.Stock
             return View();
         }
 
+        public IActionResult SupplyKey() 
+        {
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
@@ -97,6 +102,31 @@ namespace AleStock.Controllers.Stock
             }
         }
 
+        [HttpPost]
+        public async Task<ActionResult> SubmitAPIKeys([DataSourceRequest] DataSourceRequest request, UserAPIKeysViewModel vm)
+        {
+
+            try {
+                if (vm != null) {
+                    // dont need to check if there is existing simfin key because they
+                    // have to submit this to proceed with analyzation/Ai analyzation
+                    UserAPIKeys user_keys = new UserAPIKeys();
+                    user_keys.Email = vm.Email;
+                    user_keys.Simfin_Key = vm.Simfin_Key;
+
+                    // create user keys record
+                    string result_msg = await _dbContext.SubmitAPIKeys(user_keys);
+
+                    // validate result msg
+
+                    // send to page to submit stock analyzation choices
+                    return View("FinanceAnalyzation");
+                }
+            } catch (Exception ex) {
+                TempData["ValidationMsg"] = "You have yet to submit your associated SimFin key.";
+                return RedirectToAction("SupplyKey", "Stock");
+            }
+        }
 
         // function to retrieve the financial information of a single stock record
         [HttpGet]
@@ -130,26 +160,42 @@ namespace AleStock.Controllers.Stock
         [HttpPost]
         public async Task<ActionResult> SubmitStockChoices([DataSourceRequest] DataSourceRequest request, StockChoicesViewModel model)
         {
+            // check if user has attributed simfin key
+            var user = supabase.Auth.CurrentUser;
+            string email = user.Email;
 
-            int year_int = Int32.Parse(model.Year.ToString());
+            // retrieve user api keys based on email
+            UserAPIKeys keys = await _dbContext.GetUserAPIKeys(user.Email);
 
-            // set information in http session for retrieval if user chooses to do an AI summarization
-            _httpContextAccessor.HttpContext.Session.SetString("Quarter", model.Quarter.ToString());
-            _httpContextAccessor.HttpContext.Session.SetString("Ticker", model.Ticker.ToString());
-            _httpContextAccessor.HttpContext.Session.SetString("Year", model.Year.ToString());
+            // if the user has submitted their simfin key, proceed with rest
+            if (keys.Simfin_Key != null) {
+
+                int year_int = Int32.Parse(model.Year.ToString());
+
+                // set information in http session for retrieval if user chooses to do an AI summarization
+                _httpContextAccessor.HttpContext.Session.SetString("Quarter", model.Quarter.ToString());
+                _httpContextAccessor.HttpContext.Session.SetString("Ticker", model.Ticker.ToString());
+                _httpContextAccessor.HttpContext.Session.SetString("Year", model.Year.ToString());
 
 
-            StockEconomicalInfo init_record = await CheckExistence(model.Ticker, model.Quarter, year_int);
+                StockEconomicalInfo init_record = await CheckExistence(model.Ticker, model.Quarter, year_int);
 
-            if (init_record == null)
-            {
-                // retrieves info and processes to db
-                await RunScript(@"Scripts\simfin.py", model.APIKey, model.Ticker, model.Quarter, year_int);
+                if (init_record == null)
+                {
+                    // retrieves info and processes to db
+                    await RunScript(@"Scripts\simfin.py", keys.Simfin_Key, model.Ticker, model.Quarter, year_int);
+                }
+
+                // send to page to view results
+                return RedirectToAction("SpecificFinancials", "Stock", new { tick=model.Ticker.ToString(), quarter=model.Quarter.ToString(), year=model.Year.ToString() });
+        
+            } else {
+                // if they have no simfin api key, send to key submission page
+                TempData["ValidationMsg"] = "You have yet to submit your associated SimFin API key.";
+                return RedirectToAction("SupplyKey", "Stock");
             }
 
-            // send to page to view results
-            return RedirectToAction("SpecificFinancials", "Stock", new { tick=model.Ticker.ToString(), quarter=model.Quarter.ToString(), year=model.Year.ToString() });
-
+            
         }
 
         // function to run the pythonNet script and run simfin script with necessary user-submitted variables

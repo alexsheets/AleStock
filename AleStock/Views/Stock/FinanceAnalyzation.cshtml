@@ -39,13 +39,6 @@
 
     @using (Html.BeginForm("SubmitStockChoices", "Stock", FormMethod.Post, new { @id = "SubmitStockChoicesForm" }))
     {
-        // type in ticker
-        // choose quarter and year
-
-        <div class="inputDiv1">
-            <label>First, paste your API key from Simfin (including dashes):</label>
-            @Html.Kendo().TextBoxFor(e => e.APIKey)
-        </div>
 
         @Html.Raw("<br />")
         @Html.Raw("<br />")

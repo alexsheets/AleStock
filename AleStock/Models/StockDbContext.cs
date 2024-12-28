@@ -84,10 +84,25 @@ public partial class StockDbContext : DbContext
         return result.ResponseMessage;
     }
 
-    public async Task<HttpResponseMessage?> SubmitAPIKeys() 
+    public async Task<HttpResponseMessage?> SubmitAPIKeys(UserAPIKeys model) 
     {
-        // todo
+        var result = await _supabaseClient.From<UserAPIKeys>().Insert(model);
+        return result.ResponseMessage;
     }
+
+    public async Task<HttpResponseMessage?> UpdateOpenAIKey(UserAPIKeys model) 
+    {
+        var result = await _supabaseClient.From<UserAPIKeys>().Where(x => x.Email == model.Email).Set(x => x.OpenAI_Key == model.OpenAI_Key).Update();
+        return result.ResponseMessage;
+    }
+
+    public async Task<HttpResponseMessage?> UpdateSimfinAPIKey(UserAPIKeys model) 
+    {
+        var result = await _supabaseClient.From<UserAPIKeys>().Where(x => x.Email == model.Email).Set(x => x.Simfin_Key == model.Simfin_Key).Update();
+        return result.ResponseMessage;
+    }
+
+
 
     public async Task CreateUser(string email, string password)
     {

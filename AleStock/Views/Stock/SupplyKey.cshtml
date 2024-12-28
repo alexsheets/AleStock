@@ -37,7 +37,7 @@
         </div>
     }
 
-    @using (Html.BeginForm("SubmitAPIKeys", "AI", FormMethod.Post, new { @id = "SubmitAPIKeysForm" }))
+    @using (Html.BeginForm("SubmitAPIKeys", "Stock", FormMethod.Post, new { @id = "SubmitAPIKeysForm" }))
     {
 
         @Html.Raw("<br />")
@@ -52,8 +52,8 @@
         @Html.Raw("<br />")
 
         <div class="inputDiv1">
-            <label>Paste your API key from OpenAI (including dashes):</label>
-            @Html.Kendo().TextBoxFor(e => e.OpenAI_Key)
+            <label>Paste your API key from SimFin API (including dashes):</label>
+            @Html.Kendo().TextBoxFor(e => e.Simfin_Key)
         </div>
 
         <div class="submitBtnDiv">

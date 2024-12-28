@@ -47,8 +47,59 @@ namespace AleStock.Controllers.Stock
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        public async Task<ActionResult> CheckForAPIKeys() {
+            
+            // retrieve current logged in user
+            var user = supabase.Auth.CurrentUser;
+            string email = user.Email;
+
+            // retrieve user api keys based on email
+            UserAPIKeys keys = await _dbContext.GetUserAPIKeys(user.Email);
+
+            if (keys.OpenAI_Key != null) {
+                return RedirectToAction("GetAISummarization", "AI", new { api_key = keys.OpenAI_Key.ToString() });
+            } else {
+                // if they have no api keys record, send to key submission page
+                TempData["ValidationMsg"] = "You have yet to submit your associated OpenAI key.";
+                return RedirectToAction("SupplyKey", "AI");
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> SubmitAPIKeys([DataSourceRequest] DataSourceRequest request, UserAPIKeysViewModel vm)
+        {
+
+            try {
+                if (vm != null) {
+                    // may have to retrieve an already existing set of API keys here with a simfin key
+                    UserAPIKeys keys = await _dbContext.GetUserAPIKeys(vm.Email);
+
+                    if (keys == null) { 
+                        UserAPIKeys user_keys = new UserAPIKeys();
+                        user_keys.Email = vm.Email;
+                        user_keys.OpenAI_Key = vm.OpenAI_Key;
+
+                        // create record if necessary
+                        string result_msg = await _dbContext.SubmitAPIKeys(user_keys);
+
+                        // send to page to view results
+                        return RedirectToAction("GetAISummarization", "AI", new { api_key = vm.OpenAI_Key.ToString() });
+                    } else {
+                        // already existing record, just update
+                        keys.OpenAI_Key = vm.OpenAI_Key;
+                        string result_msg = await _dbContext.UpdateOpenAIKey(keys);
+                    }
+
+                }
+            } catch (Exception ex) {
+                TempData["ValidationMsg"] = "You have yet to submit your associated OpenAI key.";
+                return RedirectToAction("SupplyKey", "AI");
+            }
+        }
+
         public async Task<ActionResult> GetAISummarization(string api_key)
         {
+
             // these would have been set when the user submits their choices for stock review
             // better way of transmitting the information?
             string q = _httpContextAccessor.HttpContext.Session.GetString("Quarter").ToString();
