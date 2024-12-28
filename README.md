@@ -12,19 +12,17 @@ Current Buildout:
 
 In Progress:
 
+--> Implement AI assistance
+
 --> Finishing up addition of Marketstack API
 
 --> Adding functionality for ML regressions and predictions
 
---> Adding Yahoo API for stock information and news
-
 Future Ideas:
 
---> Implement AI assistance
+--> Adding Yahoo API for stock information and news
 
 --> Adding stock backtesting
-
---> Adding overarching stock lookup which returns potent information regarding a specific stock
 
 --> Would like to build out a react chat application in the future to be on top of the ASP.NET project
 
