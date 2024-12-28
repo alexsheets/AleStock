@@ -30,6 +30,16 @@ namespace AleStock.Controllers.Stock
             return View();
         }
 
+        public IActionResult SpecificFinancials() 
+        {
+            return View();
+        }
+
+        public IActionResult Chat() 
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();
@@ -160,10 +170,7 @@ namespace AleStock.Controllers.Stock
                 // API KEY GOES HERE
                 dynamic simfin_instance = api_class(key);
 
-#pragma warning disable IDE0300 // Simplify collection initialization
                 var result = simfin_instance.InvokeMethod("convert_to_json", new PyObject[] { ticker, year, quarter });
-#pragma warning restore IDE0300 // Simplify collection initialization
-
 
 
                 //dynamic api = Py.Import(script);
@@ -216,11 +223,6 @@ namespace AleStock.Controllers.Stock
 
 
             }
-        }
-
-        public async Task<ActionResult> GetAISummarization()
-        {
-
         }
     }
 }
