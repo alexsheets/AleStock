@@ -15,7 +15,7 @@ using System.Text.Json;
 
 namespace AleStock.Controllers.Stock
 {
-    public class StockController : Controller
+    public class AIController : Controller
     {
 
         IHttpContextAccessor _httpContextAccessor = new HttpContextAccessor();
@@ -72,8 +72,11 @@ namespace AleStock.Controllers.Stock
                     var opt = new JsonSerializerOptions() { WriteIndented=true };
                     string json_str = JsonSerializer.Serialize<StockEconomicalInfo>(stockRecord);
 
-                    // instantiate class with api key
-                    dynamic openAI_instance = api_class(api_key, json_str);
+                    // if the json str is not null/empty create openAI class with api key and stock json
+                    if (!string.IsNullOrEmpty(json_str)) {
+                        // instantiate class with api key and json
+                        dynamic openAI_instance = api_class(api_key, json_str);
+                    }
                 }
             } else {
                 // if any value empty, return to the stock choice screen with error msg
