@@ -172,13 +172,10 @@ namespace AleStock.Controllers.Stock
 
                 var result = simfin_instance.InvokeMethod("convert_to_json", new PyObject[] { ticker, year, quarter });
 
-
                 //dynamic api = Py.Import(script);
                 //dynamic simfin_instance = api.SimFinAPI(key);
 
                 //var result = simfin_instance.convert_to_json(ticker, year, quarter);
-
-
 
                 if (result != null)
                 {

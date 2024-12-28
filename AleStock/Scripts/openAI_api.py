@@ -3,16 +3,30 @@ from urllib.request import Request, urlopen, urllib
 
 
 class OpenAI:
-    def __init__(self, api_key):
+    def __init__(self, api_key, financial_info):
         self.key = api_key
+        self.json_data = financial_info
     
+    def create_prompt(self):
+        return """
+        You will act as a financial analyst. You will be given some financial information relating to any particular
+        company in JSON format. Analyze them and give some advice as to whether the company finds itself in good standing.
+        Explain the related financial concepts and what the amount of money associated means for the company. 
+        You should try to relay the financial information in such a way that it is easily understandable,
+        as if it were being written for someone who is a beginner in understanding the stock market.
+        """
         
-    def chat(self, messages, model):
+    def chat(self):
         
         req_link = "https://api.openai.com/v1/chat/completions"
+
+        messages = [
+            self.create_prompt(),
+            self.json_data
+        ]
         
         data = {
-            "model": model,
+            "model": "gpt-40-mini",
             "messages": messages,
             "temperature": 0.0,
             "user": "self"

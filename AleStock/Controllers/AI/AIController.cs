@@ -11,6 +11,7 @@ using Newtonsoft.Json.Linq;
 using Telerik.SvgIcons;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using System.Security.Policy;
+using System.Text.Json;
 
 namespace AleStock.Controllers.Stock
 {
@@ -49,9 +50,12 @@ namespace AleStock.Controllers.Stock
         public async Task<ActionResult> GetAISummarization(string api_key)
         {
             // these would have been set when the user submits their choices for stock review
+            // better way of transmitting the information?
             string q = _httpContextAccessor.HttpContext.Session.GetString("Quarter").ToString();
             string t = _httpContextAccessor.HttpContext.Session.GetString("Ticker").ToString();
             string y = _httpContextAccessor.HttpContext.Session.GetString("Year").ToString();
+
+            int year_int = Int32.Parse(y);
 
             Runtime.PythonDLL = @"C:\Users\asheet3\.nuget\packages\pythonnet\3.0.4\lib\netstandard2.0\Python.Runtime.dll";
             PythonEngine.Initialize();
@@ -61,8 +65,15 @@ namespace AleStock.Controllers.Stock
                 using (Py.GIL())
                 {
                     dynamic api_class = Py.Import(@"Scripts\openAI_api.py").GetAttr("OpenAI");
-                    // API KEY GOES HERE
-                    dynamic openAI_instance = api_class(api_key);
+
+                    // retrieve stock information
+                    StockEconomicalInfo stockRecord = await _dbContext.GetSpecificStockReport(q, t, year_int);
+                    // convert to json
+                    var opt = new JsonSerializerOptions() { WriteIndented=true };
+                    string json_str = JsonSerializer.Serialize<StockEconomicalInfo>(stockRecord);
+
+                    // instantiate class with api key
+                    dynamic openAI_instance = api_class(api_key, json_str);
                 }
             } else {
                 // if any value empty, return to the stock choice screen with error msg
