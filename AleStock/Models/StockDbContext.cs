@@ -7,7 +7,7 @@ using Telerik.SvgIcons;
 using Supabase;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
-// using Supabase.Postgrest;
+using Supabase.Postgrest;
 // using Supabase.Interfaces;
 
 
@@ -18,7 +18,9 @@ public partial class StockDbContext : DbContext
 
     private string connString;
 
-    private readonly Client _supabaseClient;
+    private readonly Supabase.Client _supabaseClient;
+    private readonly Supabase.Postgrest.Client _pgClient;
+
 
     public virtual DbSet<StockEconomicalInfo> StockEconomicalReports { get; set; }
     public virtual DbSet<UserAPIKeys> APIKeyLookup { get; set; }
@@ -92,13 +94,13 @@ public partial class StockDbContext : DbContext
 
     public async Task<HttpResponseMessage?> UpdateOpenAIKey(UserAPIKeys model) 
     {
-        var result = await _supabaseClient.From<UserAPIKeys>().Where(x => x.Email == model.Email).Set(x => x.OpenAI_Key == model.OpenAI_Key).Update();
+        var result = await _supabaseClient.From<UserAPIKeys>().Where(x => x.Email == model.Email).Set(x => x.OpenAI_Key, model.OpenAI_Key).Update();
         return result.ResponseMessage;
     }
 
     public async Task<HttpResponseMessage?> UpdateSimfinAPIKey(UserAPIKeys model) 
     {
-        var result = await _supabaseClient.From<UserAPIKeys>().Where(x => x.Email == model.Email).Set(x => x.Simfin_Key == model.Simfin_Key).Update();
+        var result = await _supabaseClient.From<UserAPIKeys>().Where(x => x.Email == model.Email).Set(x => x.Simfin_Key, model.Simfin_Key).Update();
         return result.ResponseMessage;
     }
 

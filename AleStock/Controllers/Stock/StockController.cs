@@ -21,6 +21,8 @@ namespace AleStock.Controllers.Stock
 
         StockDbContext _dbContext = new StockDbContext();
 
+        private readonly Supabase.Client _supabaseClient;
+
         /*
          * Functions simply for returning the associated views
          */
@@ -103,7 +105,7 @@ namespace AleStock.Controllers.Stock
         }
 
         [HttpPost]
-        public async Task<ActionResult> SubmitAPIKeys([DataSourceRequest] DataSourceRequest request, UserAPIKeysViewModel vm)
+        public async Task<ActionResult> SubmitAPIKeys([DataSourceRequest] DataSourceRequest request, APIKeysViewModel vm)
         {
 
             try {
@@ -115,7 +117,7 @@ namespace AleStock.Controllers.Stock
                     user_keys.Simfin_Key = vm.Simfin_Key;
 
                     // create user keys record
-                    string result_msg = await _dbContext.SubmitAPIKeys(user_keys);
+                    HttpResponseMessage msg = await _dbContext.SubmitAPIKeys(user_keys);
 
                     // validate result msg
 
@@ -161,7 +163,7 @@ namespace AleStock.Controllers.Stock
         public async Task<ActionResult> SubmitStockChoices([DataSourceRequest] DataSourceRequest request, StockChoicesViewModel model)
         {
             // check if user has attributed simfin key
-            var user = supabase.Auth.CurrentUser;
+            var user = _supabaseClient.Auth.CurrentUser;
             string email = user.Email;
 
             // retrieve user api keys based on email

@@ -12,6 +12,7 @@ using Telerik.SvgIcons;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using System.Security.Policy;
 using System.Text.Json;
+using Supabase;
 
 namespace AleStock.Controllers.Stock
 {
@@ -21,6 +22,8 @@ namespace AleStock.Controllers.Stock
         IHttpContextAccessor _httpContextAccessor = new HttpContextAccessor();
 
         StockDbContext _dbContext = new StockDbContext();
+
+        private readonly Supabase.Client _supabaseClient;
 
         /*
          * Functions simply for returning the associated views
@@ -50,7 +53,7 @@ namespace AleStock.Controllers.Stock
         public async Task<ActionResult> CheckForAPIKeys() {
             
             // retrieve current logged in user
-            var user = supabase.Auth.CurrentUser;
+            var user = _supabaseClient.Auth.CurrentUser;
             string email = user.Email;
 
             // retrieve user api keys based on email
@@ -66,7 +69,7 @@ namespace AleStock.Controllers.Stock
         }
 
         [HttpPost]
-        public async Task<ActionResult> SubmitAPIKeys([DataSourceRequest] DataSourceRequest request, UserAPIKeysViewModel vm)
+        public async Task<ActionResult> SubmitAPIKeys([DataSourceRequest] DataSourceRequest request, APIKeysViewModel vm)
         {
 
             try {
@@ -80,14 +83,14 @@ namespace AleStock.Controllers.Stock
                         user_keys.OpenAI_Key = vm.OpenAI_Key;
 
                         // create record if necessary
-                        string result_msg = await _dbContext.SubmitAPIKeys(user_keys);
+                        HttpResponseMessage msg = await _dbContext.SubmitAPIKeys(user_keys);
 
                         // send to page to view results
                         return RedirectToAction("GetAISummarization", "AI", new { api_key = vm.OpenAI_Key.ToString() });
                     } else {
                         // already existing record, just update
                         keys.OpenAI_Key = vm.OpenAI_Key;
-                        string result_msg = await _dbContext.UpdateOpenAIKey(keys);
+                        HttpResponseMessage msg = await _dbContext.UpdateOpenAIKey(keys);
                     }
 
                 }
