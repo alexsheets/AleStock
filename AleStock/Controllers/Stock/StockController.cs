@@ -123,6 +123,9 @@ namespace AleStock.Controllers.Stock
 
                     // send to page to submit stock analyzation choices
                     return View("FinanceAnalyzation");
+                } else {
+                    TempData["ValidationMsg"] = "There was an error submitting your SimFin key. Please try again.";
+                    return RedirectToAction("SupplyKey", "Stock");
                 }
             } catch (Exception ex) {
                 TempData["ValidationMsg"] = "You have yet to submit your associated SimFin key.";

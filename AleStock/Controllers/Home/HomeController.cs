@@ -17,6 +17,11 @@ namespace AleStock.Controllers.Home
             return View();
         }
 
+        public IActionResult Register()
+        {
+            return View();
+        }
+
         [HttpPost]
         public async Task<ActionResult> Register(SignIn credentials)
         {
