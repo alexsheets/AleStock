@@ -1,9 +1,9 @@
 ﻿using Xunit;
 using FluentAssertions;
 using Ale.Models;
+using AleStock.Models.TestModels;
 using Telerik.SvgIcons;
 using Microsoft.EntityFrameworkCore;
-using AleStock.Models;
 
 namespace AleStock.Classes.Testing
 {
@@ -32,9 +32,14 @@ namespace AleStock.Classes.Testing
         [Fact]
         public async Task TestSubmitAndRetrieveStockReport()
         {
-            // create stock economical info viewmodel
-            StockEconomicalInfo info = new StockEconomicalInfo();
+            // create stock economical info viewmodel; only information non-nullable is ticker, quarter and year
+            TestStockEconomicalReport info = new TestStockEconomicalReport();
+            info.Ticker = "AAPL";
+            info.Quarter = "Q3";
+            info.Year = 2023;
 
+            // attempt stock report submission
+            await _context.SubmitTestStockReport(info);
 
             // save the changes to database
             await _context.SaveChangesAsync();
@@ -44,6 +49,8 @@ namespace AleStock.Classes.Testing
             reports.Should().HaveCount(1);
 
             // test retrieval
+            TestStockEconomicalReport testReport = await _context.GetSpecificTestStockReport(info.Ticker, info.Quarter, info.Year);
+            testReport.Should().NotBeNull();
         }
 
     }

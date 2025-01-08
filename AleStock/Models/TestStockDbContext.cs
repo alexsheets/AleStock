@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Web.Razor.Parser.SyntaxTree;
 using AleStock.Models;
+using AleStock.Models.TestModels;
 using Microsoft.EntityFrameworkCore;
 using Telerik.SvgIcons;
 using Supabase;
@@ -21,8 +22,7 @@ public partial class TestStockDbContext : DbContext
     private readonly Supabase.Client _supabaseClient;
     // private readonly Supabase.Postgrest.Client _pgClient;
 
-    public virtual DbSet<StockEconomicalInfo> StockEconomicalReports { get; set; }
-    public virtual DbSet<UserAPIKeys> APIKeyLookup { get; set; }
+    public virtual DbSet<TestStockEconomicalReport> TestStockEconomicalReports { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -40,37 +40,37 @@ public partial class TestStockDbContext : DbContext
     }
 
     // RETRIEVAL DB operations
-    public async Task<List<StockEconomicalInfo>> GetAllTestStockReports()
+    public async Task<List<TestStockEconomicalReport>> GetAllTestStockReports()
     {
         try
         {
-            var result = await _supabaseClient.From<StockEconomicalInfo>().Get();
+            var result = await _supabaseClient.From<TestStockEconomicalReport>().Get();
             return result.Models;
         }
         catch (Exception ex)
         {
-            return new List<StockEconomicalInfo>();
+            return new List<TestStockEconomicalReport>();
         }
     }
 
-    public async Task<StockEconomicalInfo> GetSpecificTestStockReport(string ticker, string quarter, int year)
+    public async Task<TestStockEconomicalReport> GetSpecificTestStockReport(string ticker, string quarter, int year)
     {
         try
         {
-            var result = await _supabaseClient.From<StockEconomicalInfo>()
+            var result = await _supabaseClient.From<TestStockEconomicalReport>()
                 .Where(e => (e.Ticker == ticker) && (e.Quarter == quarter) && (e.Year == year)).Get();
             return result.Model;
         }
         catch (Exception ex)
         {
-            return new StockEconomicalInfo();
+            return new TestStockEconomicalReport();
         }
     }
 
     // INSERT DB operations
-    public async Task<HttpResponseMessage?> SubmitTestStockReport(StockEconomicalInfo model)
+    public async Task<HttpResponseMessage?> SubmitTestStockReport(TestStockEconomicalReport model)
     {
-        var result = await _supabaseClient.From<StockEconomicalInfo>().Insert(model);
+        var result = await _supabaseClient.From<TestStockEconomicalReport>().Insert(model);
         return result.ResponseMessage;
     }
 
