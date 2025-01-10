@@ -5,12 +5,8 @@ using Python.Runtime;
 using Kendo.Mvc.UI;
 using AleStock.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Supabase.Postgrest;
-using Ale.Models;
 using Newtonsoft.Json.Linq;
-using Telerik.SvgIcons;
-using Microsoft.AspNetCore.JsonPatch.Operations;
-using System.Security.Policy;
+
 
 namespace AleStock.Controllers.Stock
 {
@@ -18,10 +14,18 @@ namespace AleStock.Controllers.Stock
     {
 
         IHttpContextAccessor _httpContextAccessor = new HttpContextAccessor();
-
-        StockDbContext _dbContext = new StockDbContext();
-
+        StockDbContext _dbContext;
         private readonly Supabase.Client _supabaseClient;
+        // private readonly Supabase.Postgrest.Client _pgClient;
+        private readonly IConfiguration _configuration;
+
+        // class member instantiation
+        public StockController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _supabaseClient = new Supabase.Client(_configuration["SecretSection:url"], _configuration["SecretSection:key"]);
+            _dbContext = new StockDbContext(configuration);
+        }
 
         /*
          * Functions simply for returning the associated views

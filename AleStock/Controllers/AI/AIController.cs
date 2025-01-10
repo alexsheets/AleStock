@@ -4,15 +4,7 @@ using System.Diagnostics;
 using Python.Runtime;
 using Kendo.Mvc.UI;
 using AleStock.Models.ViewModels;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Supabase.Postgrest;
-using Ale.Models;
-using Newtonsoft.Json.Linq;
-using Telerik.SvgIcons;
-using Microsoft.AspNetCore.JsonPatch.Operations;
-using System.Security.Policy;
 using System.Text.Json;
-using Supabase;
 
 namespace AleStock.Controllers.Stock
 {
@@ -20,10 +12,18 @@ namespace AleStock.Controllers.Stock
     {
 
         IHttpContextAccessor _httpContextAccessor = new HttpContextAccessor();
-
-        StockDbContext _dbContext = new StockDbContext();
-
+        StockDbContext _dbContext;
         private readonly Supabase.Client _supabaseClient;
+        // private readonly Supabase.Postgrest.Client _pgClient;
+        private readonly IConfiguration _configuration;
+
+        // class member instantiation
+        public AIController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _supabaseClient = new Supabase.Client(_configuration["SecretSection:url"], _configuration["SecretSection:key"]);
+            _dbContext = new StockDbContext(configuration);
+        }
 
         /*
          * Functions simply for returning the associated views
@@ -73,7 +73,6 @@ namespace AleStock.Controllers.Stock
             
             // retrieve current logged in user
             var user = _supabaseClient.Auth.CurrentUser;
-            string email = user.Email;
 
             // retrieve user api keys based on email
             UserAPIKeys keys = await _dbContext.GetUserAPIKeys(user.Email);
@@ -129,6 +128,7 @@ namespace AleStock.Controllers.Stock
         {
 
             // would have been set upon submitting parameters for stock financial analyzation
+            // might need to change this
             string q = _httpContextAccessor.HttpContext.Session.GetString("Quarter").ToString();
             string t = _httpContextAccessor.HttpContext.Session.GetString("Ticker").ToString();
             string y = _httpContextAccessor.HttpContext.Session.GetString("Year").ToString();

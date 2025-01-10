@@ -4,12 +4,7 @@ using System.Web.Razor.Parser.SyntaxTree;
 using AleStock.Models;
 using AleStock.Models.TestModels;
 using Microsoft.EntityFrameworkCore;
-using Telerik.SvgIcons;
-using Supabase;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
-using Supabase.Postgrest;
-// using Supabase.Interfaces;
+
 
 
 namespace Ale.Models;
@@ -17,10 +12,18 @@ namespace Ale.Models;
 public partial class TestStockDbContext : DbContext
 {
 
-    private string connString;
+    private string? connString;
 
-    private readonly Supabase.Client _supabaseClient;
+    Supabase.Client _supabaseClient;
     // private readonly Supabase.Postgrest.Client _pgClient;
+
+    private readonly IConfiguration _configuration;
+    public TestStockDbContext(IConfiguration configuration)
+    {
+        _configuration = configuration;
+        _supabaseClient = new Supabase.Client(_configuration["SecretSection:url"], _configuration["SecretSection:key"]);
+    }
+
 
     public virtual DbSet<TestStockEconomicalReport> TestStockEconomicalReports { get; set; }
 
@@ -72,6 +75,18 @@ public partial class TestStockDbContext : DbContext
     {
         var result = await _supabaseClient.From<TestStockEconomicalReport>().Insert(model);
         return result.ResponseMessage;
+    }
+
+    // AUTH DB operations
+    public async Task TestCreateUser(string email, string password)
+    {
+        var session = await _supabaseClient.Auth.SignUp(email, password);
+    }
+
+    public async Task<Supabase.Gotrue.Session?> TestSignIn(string email, string password)
+    {
+        var session = await _supabaseClient.Auth.SignIn(email, password);
+        return session;
     }
 
 }

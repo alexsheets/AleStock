@@ -10,16 +10,22 @@ using System.Runtime.CompilerServices;
 using Supabase.Postgrest;
 // using Supabase.Interfaces;
 
-
-namespace Ale.Models;
+namespace AleStock.Models;
 
 public partial class StockDbContext : DbContext
 {
 
-    private string connString;
+    private string? connString;
 
-    private readonly Supabase.Client _supabaseClient;
-    private readonly Supabase.Postgrest.Client _pgClient;
+    Supabase.Client _supabaseClient;
+    // private readonly Supabase.Postgrest.Client _pgClient;
+
+    private readonly IConfiguration _configuration;
+    public StockDbContext(IConfiguration configuration)
+    {
+        _configuration = configuration;
+        _supabaseClient = new Supabase.Client(_configuration["SecretSection:url"], _configuration["SecretSection:key"]);
+    }
 
 
     public virtual DbSet<StockEconomicalInfo> StockEconomicalReports { get; set; }
