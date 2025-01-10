@@ -152,7 +152,7 @@ namespace AleStock.Controllers.Stock
 
                     // convert to json
                     var opt = new JsonSerializerOptions() { WriteIndented = true };
-                    string json_str = JsonSerializer.Serialize(infoForAi);
+                    string json_str = JsonSerializer.Serialize(infoForAi, opt);
 
                     // if the json str is not null/empty create openAI class with api key and stock json
                     if (!string.IsNullOrEmpty(json_str))

@@ -110,7 +110,7 @@ namespace AleStock.Controllers.Stock
 
             try {
                 if (vm != null) {
-                    // dont need to check if there is existing simfin key because they
+                    // dont need to check if there is existing simfin key because users
                     // have to submit this to proceed with analyzation/Ai analyzation
                     UserAPIKeys user_keys = new UserAPIKeys();
                     user_keys.Email = vm.Email;
@@ -135,14 +135,14 @@ namespace AleStock.Controllers.Stock
 
         // function to retrieve the financial information of a single stock record
         [HttpGet]
-        public async Task<ActionResult<StockEconomicalInfo>> SpecificFinancials(string tick, string quarter, string yr_str)
+        public async Task<ActionResult<StockEconomicalInfo>> SpecificFinancials(string tick, string quarter, string year)
         {
-            int year = int.Parse(yr_str);
+            int year_int = Int32.Parse(year);
 
             // retrieve model associated
-            StockEconomicalInfo stockRecord = await _dbContext.GetSpecificStockReport(tick, quarter, year);
+            StockEconomicalInfo stockRecord = await _dbContext.GetSpecificStockReport(tick, quarter, year_int);
 
-            return View(stockRecord);
+            return View("SpecificFinancials", stockRecord);
         }
 
         // helper func to recognize whether this stock economical record has been created in DB yet
@@ -167,7 +167,6 @@ namespace AleStock.Controllers.Stock
         {
             // check if user has attributed simfin key
             var user = _supabaseClient.Auth.CurrentUser;
-            string email = user.Email;
 
             // retrieve user api keys based on email
             UserAPIKeys keys = await _dbContext.GetUserAPIKeys(user.Email);
@@ -182,29 +181,34 @@ namespace AleStock.Controllers.Stock
                 _httpContextAccessor.HttpContext.Session.SetString("Ticker", model.Ticker.ToString());
                 _httpContextAccessor.HttpContext.Session.SetString("Year", model.Year.ToString());
 
-
+                // check if stock exists by checking
                 StockEconomicalInfo init_record = await CheckExistence(model.Ticker, model.Quarter, year_int);
 
                 if (init_record == null)
                 {
                     // retrieves info and processes to db
-                    await RunScript(@"Scripts\simfin.py", keys.Simfin_Key, model.Ticker, model.Quarter, year_int);
+                    string result = await RunScript(@"Scripts\simfin.py", keys.Simfin_Key, model.Ticker, model.Quarter, year_int);
+                    if (result == "SUCCESS!")
+                    {
+                        return RedirectToAction("SpecificFinancials", "Stock", new { tick = model.Ticker.ToString(), quarter = model.Quarter.ToString(), year = model.Year.ToString() });
+                    }
+                    else
+                    {
+                        TempData["ValidationMsg"] = "Error running SimFin Script. Please retry submitting values.";
+                        return RedirectToAction("FinanceAnalyzation");
+                    }
                 }
-
                 // send to page to view results
                 return RedirectToAction("SpecificFinancials", "Stock", new { tick=model.Ticker.ToString(), quarter=model.Quarter.ToString(), year=model.Year.ToString() });
-        
             } else {
                 // if they have no simfin api key, send to key submission page
                 TempData["ValidationMsg"] = "You have yet to submit your associated SimFin API key.";
                 return RedirectToAction("SupplyKey", "Stock");
             }
-
-            
         }
 
         // function to run the pythonNet script and run simfin script with necessary user-submitted variables
-        public async Task<ActionResult> RunScript(string script, string api_key, string ticker_submitted, string quarter_submitted, int year_submitted)
+        public async Task<string> RunScript(string script, string api_key, string ticker_submitted, string quarter_submitted, int year_submitted)
         {
             Runtime.PythonDLL = @"C:\Users\asheet3\.nuget\packages\pythonnet\3.0.4\lib\netstandard2.0\Python.Runtime.dll";
             PythonEngine.Initialize();
@@ -263,13 +267,11 @@ namespace AleStock.Controllers.Stock
 
                     await _dbContext.SubmitStockReport(stockRecord);
 
-                    return View("SpecificFinancials");
+                    return "SUCCESS!";
                 } else
                 {
-                    return View("Index");
+                    return "Failed to convert to JSON";
                 }
-
-
             }
         }
     }
