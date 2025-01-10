@@ -7,21 +7,24 @@ using Microsoft.EntityFrameworkCore;
 using dotenv;
 using dotenv.net;
 using Supabase;
+using AleStock.Models;
 
 namespace AleStock.Classes.Testing
 {
     public class TestUserAuth : IDisposable
     {
+        IHttpContextAccessor _httpContextAccessor = new HttpContextAccessor();
         TestStockDbContext _context;
+        private readonly Supabase.Client _supabaseClient;
+        // private readonly Supabase.Postgrest.Client _pgClient;
+        private readonly IConfiguration _configuration;
 
-        Client _client = new Supabase.Client("", "");
-
-        public TestUserAuth()
+        public TestUserAuth(IConfiguration configuration)
         {
-            // instantiate a new connection to DB by creating new context
-            // db connection is handled in the class
-            _context = new TestStockDbContext();
 
+            _configuration = configuration;
+            _supabaseClient = new Supabase.Client(_configuration["SecretSection:url"], _configuration["SecretSection:key"]);
+            _context = new TestStockDbContext(configuration);
             _context.Database.EnsureDeleted();
             _context.Database.Migrate();
 
@@ -44,7 +47,7 @@ namespace AleStock.Classes.Testing
             string password = Environment.GetEnvironmentVariable("TEST_PASSWORD");
 
             var session = await _context.TestSignIn(email, password);
-            string _clientEmail = _supabase.Auth.CurrentUser.Email;
+            string _clientEmail = _supabaseClient.Auth.CurrentUser.Email;
 
             _clientEmail.Should().BeEquivalentTo(email);
         }

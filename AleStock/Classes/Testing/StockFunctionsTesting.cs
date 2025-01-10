@@ -9,13 +9,18 @@ namespace AleStock.Classes.Testing
 {
     public class StockFunctionsTesting : IDisposable
     {
-        private readonly TestStockDbContext _context;
+        IHttpContextAccessor _httpContextAccessor = new HttpContextAccessor();
+        TestStockDbContext _context;
+        private readonly Supabase.Client _supabaseClient;
+        // private readonly Supabase.Postgrest.Client _pgClient;
+        private readonly IConfiguration _configuration;
 
-        public StockFunctionsTesting()
+        public StockFunctionsTesting(IConfiguration configuration)
         {
-            // instantiate a new connection to DB by creating new context
-            // db connection is handled in the class
-            _context = new TestStockDbContext();
+
+            _configuration = configuration;
+            _supabaseClient = new Supabase.Client(_configuration["SecretSection:url"], _configuration["SecretSection:key"]);
+            _context = new TestStockDbContext(configuration);
             _context.Database.EnsureDeleted();
             _context.Database.Migrate();
 
