@@ -3,6 +3,8 @@
 --> map out user flow logic of current setup
 --> fully flesh out AI responses and tweak accordingly
 
+--> create dropdown for users to create stocks by scraping them?
+--> check into using CSnakes instead of PythonNET
 
 DOCS:
 https://marketstack.com/documentation

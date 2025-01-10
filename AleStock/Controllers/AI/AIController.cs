@@ -50,6 +50,25 @@ namespace AleStock.Controllers.Stock
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        // simple function to convert a stock record to the necessary information for AI analyzation
+        public StockRecordInfoForAIViewModel ConvertStockRecord(StockEconomicalInfo record)
+        {
+            StockRecordInfoForAIViewModel infoForAi = new StockRecordInfoForAIViewModel() 
+            {
+                GrossProfitMargin = record.GrossProfitMargin,
+                OperatingMargin = record.OperatingMargin,
+                NetProfitMargin = record.NetProfitMargin,
+                ReturnOnEquity = record.ReturnOnEquity,
+                ReturnOnAssets = record.ReturnOnAssets,
+                ReturnOnInvested = record.ReturnOnInvested,
+                LiquidityRatio = record.LiquidityRatio,
+                LiabilitiesToEquityRatio = record.LiabilitiesToEquityRatio,
+                DebtRatio = record.DebtRatio,
+                DividendPayoutRatio = record.DividendPayoutRatio
+            };
+            return infoForAi;
+        }
+
         public async Task<ActionResult> CheckForAPIKeys() {
             
             // retrieve current logged in user
@@ -106,44 +125,50 @@ namespace AleStock.Controllers.Stock
             }
         }
 
-        //public async Task<ActionResult> GetAISummarization(string api_key)
-        //{
+        public async Task<ActionResult> GetAISummarization(string api_key)
+        {
 
-        //    // these would have been set when the user submits their choices for stock review
-        //    // better way of transmitting the information?
-        //    string q = _httpContextAccessor.HttpContext.Session.GetString("Quarter").ToString();
-        //    string t = _httpContextAccessor.HttpContext.Session.GetString("Ticker").ToString();
-        //    string y = _httpContextAccessor.HttpContext.Session.GetString("Year").ToString();
+            // would have been set upon submitting parameters for stock financial analyzation
+            string q = _httpContextAccessor.HttpContext.Session.GetString("Quarter").ToString();
+            string t = _httpContextAccessor.HttpContext.Session.GetString("Ticker").ToString();
+            string y = _httpContextAccessor.HttpContext.Session.GetString("Year").ToString();
+            int year_int = Int32.Parse(y);
 
-        //    int year_int = Int32.Parse(y);
+            Runtime.PythonDLL = @"C:\Users\asheet3\.nuget\packages\pythonnet\3.0.4\lib\netstandard2.0\Python.Runtime.dll";
+            PythonEngine.Initialize();
 
-        //    Runtime.PythonDLL = @"C:\Users\asheet3\.nuget\packages\pythonnet\3.0.4\lib\netstandard2.0\Python.Runtime.dll";
-        //    PythonEngine.Initialize();
+            if (q != null && t != null && y != null)
+            {
+                using (Py.GIL())
+                {
+                    // instantiate the api as a callable class
+                    dynamic api_class = Py.Import(@"Scripts\openAI_api.py").GetAttr("OpenAI");
 
-        //    if (q != null && t != null && y != null) 
-        //    {
-        //        using (Py.GIL())
-        //        {
-        //            dynamic api_class = Py.Import(@"Scripts\openAI_api.py").GetAttr("OpenAI");
+                    // retrieve stock information
+                    StockEconomicalInfo stockRecord = await _dbContext.GetSpecificStockReport(q, t, year_int);
 
-        //            // retrieve stock information
-        //            StockEconomicalInfo stockRecord = await _dbContext.GetSpecificStockReport(q, t, year_int);
-        //            // convert to json
-        //            var opt = new JsonSerializerOptions() { WriteIndented=true };
-        //            string json_str = JsonSerializer.Serialize<StockEconomicalInfo>(stockRecord);
+                    // call func to create specific viewmodel of stock information to pass to AI analyzation
+                    StockRecordInfoForAIViewModel infoForAi = ConvertStockRecord(stockRecord);
 
-        //            // if the json str is not null/empty create openAI class with api key and stock json
-        //            if (!string.IsNullOrEmpty(json_str)) {
-        //                // instantiate class with api key and json
-        //                dynamic openAI_instance = api_class(api_key, json_str);
-        //            }
-        //        }
-        //    } else {
-        //        // if any value empty, return to the stock choice screen with error msg
-        //        TempData["ValidationMsg"] = "One of your values was missing for the AI summarization. Please re-submit your choices.";
-        //        return View("FinanceAnalyzation");
-        //    }
+                    // convert to json
+                    var opt = new JsonSerializerOptions() { WriteIndented = true };
+                    string json_str = JsonSerializer.Serialize(infoForAi);
 
-        //}
+                    // if the json str is not null/empty create openAI class with api key and stock json
+                    if (!string.IsNullOrEmpty(json_str))
+                    {
+                        // create class instantiation with api key and json of financial information
+                        dynamic openAI_instance = api_class(api_key, json_str);
+                    }
+                }
+            }
+            else
+            {
+                // if any value empty, return to the stock choice screen with error msg
+                TempData["ValidationMsg"] = "One of your values was missing for the AI summarization. Please re-submit your choices.";
+                return View("FinanceAnalyzation");
+            }
+
+        }
     }
 }

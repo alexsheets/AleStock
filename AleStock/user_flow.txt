@@ -1,0 +1,24 @@
+﻿Current User Flow for AleStock:
+---------------------------
+--> Login
+----> Register (if need be)
+---------------------------
+--> Continue to a home screen?
+--> Can access the 'chat' functionality immediately after signing up
+--> Currently sends user to FinanceAnalyzation.cshtml which allows the user to submit their parameters
+(ticker, quarter, year)
+----> IF USER HAS NO SIMFIN KEY LOGGED IN DATABASE: send to Stock/SupplyKey.cshtml
+----> ONCE THEY HAVE SUCCESSFULLY SUBMITTED, back to FinanceAnalyzation.cshtml
+--> Upon submission of SubmitStockChoices along with user who has associated SimFin key, send to view SpecificFinancials.cshtml
+--------------------------
+--> Allow user to click a button from SpecificFinancials.cshtml which performs an AI analysis
+and returns them to AIFinanceSummarization.cshtml
+----> IF USER HAS NO OPENAI KEY LOGGED IN DATABASE: send to AI/SupplyKey.cshtml
+----> ONCE THEY HAVE SUCCESSFULLY SUBMITTED, back to FinanceAnalyzation.cshtml 
+(parameters saved in httpcontext so no need to resubmit as long as these specific financials have been scraped and added to DB)
+
+
+
+IDEAS:
+--> move api key submission entirely to front of flow
+--> work on frontend in general
