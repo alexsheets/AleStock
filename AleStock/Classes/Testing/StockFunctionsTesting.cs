@@ -1,9 +1,9 @@
 ﻿using Xunit;
 using FluentAssertions;
-using Ale.Models;
 using AleStock.Models.TestModels;
 using Telerik.SvgIcons;
 using Microsoft.EntityFrameworkCore;
+using AleStock.Models;
 
 namespace AleStock.Classes.Testing
 {

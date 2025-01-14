@@ -1,7 +1,7 @@
 ﻿using AleStock.Models.TestModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Alestock.Models;
+namespace AleStock.Models;
 
 public partial class TestStockDbContext : DbContext
 {

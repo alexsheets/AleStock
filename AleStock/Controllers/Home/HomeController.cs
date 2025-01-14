@@ -1,5 +1,4 @@
-﻿using Ale.Models;
-using AleStock.Models;
+﻿using AleStock.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mail;
 
@@ -10,7 +9,18 @@ namespace AleStock.Controllers.Home
 
         IHttpContextAccessor _httpContextAccessor = new HttpContextAccessor();
 
-        StockDbContext _dbContext = new StockDbContext();
+        StockDbContext _dbContext;
+        private readonly Supabase.Client _supabaseClient;
+        // private readonly Supabase.Postgrest.Client _pgClient;
+        private readonly IConfiguration _configuration;
+
+        // class member instantiation
+        public HomeController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _supabaseClient = new Supabase.Client(_configuration["SecretSection:url"], _configuration["SecretSection:key"]);
+            _dbContext = new StockDbContext(configuration);
+        }
 
         public IActionResult Index()
         {
