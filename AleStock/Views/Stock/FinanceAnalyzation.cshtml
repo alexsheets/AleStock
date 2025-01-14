@@ -1,6 +1,4 @@
-﻿@using Kendo.Mvc.UI;
-
-@model AleStock.Models.ViewModels.StockChoicesViewModel
+﻿@model AleStock.Models.ViewModels.StockChoicesViewModel
 
 <style>
 
@@ -45,7 +43,7 @@
 
         <div class="inputDiv1">
             <label>Type in ticker:</label>
-            @Html.Kendo().TextBoxFor(e => e.Ticker)
+            @Html.TextBoxFor(e => e.Ticker)
         </div>
 
         @Html.Raw("<br />")
@@ -54,18 +52,22 @@
         <div class="inputDiv2" id="dropdownInputDiv">
             <label>Choose quarter of fiscal year to analyze:</label>
             @(
-                Html.Kendo().DropDownListFor(m => m.Quarter)
-                .DataTextField("Text")
-                .DataValueField("Value")
-                .SelectedIndex(0)
-                .DataSource(source =>
-                {
-                    source.Read(read =>
-                    {
-                        read.Action("getQuarters", "Stock");
-                    });
-                })
+                Html.DropDownListFor(m => m.Quarter,
+                    new SelectList(
+                        new List<SelectListItem>
+                        {
+                            new SelectListItem() { Text = "Q1", Value = "Q1" },
+                            new SelectListItem() { Text = "Q2", Value = "Q2" },
+                            new SelectListItem() { Text = "Q3", Value = "Q3" },
+                            new SelectListItem() { Text = "Q4", Value = "Q4" },
+                        },
+                        "value",
+                        "text",
+                        Model.Quarter
+                    )
                 )
+            )
+            
 
         </div>
 
@@ -75,18 +77,26 @@
         <div class="inputDiv2" id="dropdownInputDiv">
             <label>Choose year of financials to analyze:</label>
             @(
-                Html.Kendo().DropDownListFor(m => m.Year)
-                .DataTextField("Text")
-                .DataValueField("Value")
-                .SelectedIndex(0)
-                .DataSource(source =>
-                {
-                    source.Read(read =>
-                    {
-                        read.Action("getYears", "Stock");
-                    });
-                })
+                Html.DropDownListFor(m => m.Year,
+                    new SelectList(
+                        new List<SelectListItem>
+                        {
+                            new SelectListItem() { Text = "2017", Value = "2017" },
+                            new SelectListItem() { Text = "2018", Value = "2018" },
+                            new SelectListItem() { Text = "2019", Value = "2019" },
+                            new SelectListItem() { Text = "2020", Value = "2020" },
+                            new SelectListItem() { Text = "2021", Value = "2021" },
+                            new SelectListItem() { Text = "2022", Value = "2022" },
+                            new SelectListItem() { Text = "2023", Value = "2023" },
+                            new SelectListItem() { Text = "2024", Value = "2024" },
+                            new SelectListItem() { Text = "2024", Value = "2025" },
+                        },
+                        "value",
+                        "text",
+                        Model.Year
+                    )
                 )
+            )
 
         </div>
         

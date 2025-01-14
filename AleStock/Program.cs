@@ -1,4 +1,3 @@
-using Ale.Models;
 using AleStock.Hubs;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;

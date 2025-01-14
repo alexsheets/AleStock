@@ -1,9 +1,6 @@
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Serialization;
 using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+
 
 namespace AleStock.Models
 {

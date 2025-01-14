@@ -13,7 +13,7 @@ namespace AleStock.Classes.Testing
 {
     public class TestUserAuth : IDisposable
     {
-        IHttpContextAccessor _httpContextAccessor = new HttpContextAccessor();
+
         TestStockDbContext _context;
         private readonly Supabase.Client _supabaseClient;
         // private readonly Supabase.Postgrest.Client _pgClient;

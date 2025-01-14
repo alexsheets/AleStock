@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Web.Razor.Parser.SyntaxTree;
-using AleStock.Models;
-using AleStock.Models.TestModels;
+﻿using AleStock.Models.TestModels;
 using Microsoft.EntityFrameworkCore;
 
-
-
-namespace Ale.Models;
+namespace Alestock.Models;
 
 public partial class TestStockDbContext : DbContext
 {

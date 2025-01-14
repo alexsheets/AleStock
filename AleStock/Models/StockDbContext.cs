@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Web.Razor.Parser.SyntaxTree;
-using AleStock.Models;
-using Microsoft.EntityFrameworkCore;
-using Telerik.SvgIcons;
+﻿using Microsoft.EntityFrameworkCore;
 using Supabase;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
 using Supabase.Postgrest;
 // using Supabase.Interfaces;
 
