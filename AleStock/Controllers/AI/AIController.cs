@@ -5,6 +5,9 @@ using Python.Runtime;
 using Kendo.Mvc.UI;
 using AleStock.Models.ViewModels;
 using System.Text.Json;
+using OpenAI.Chat;
+using System.ClientModel;
+using System.Text;
 
 namespace AleStock.Controllers.Stock
 {
@@ -124,43 +127,62 @@ namespace AleStock.Controllers.Stock
             }
         }
 
+        public string returnPrompt()
+        {
+            return """
+                You will act as a financial analyst. 
+                You will be given some financial information for one fiscal quarter relating to a particular company in a JSON string.
+                The financial concepts are passed in the JSON as keys. 
+                The values of the JSON are the associated amounts of money the company reported for the quarter.
+                Briefly explain each related financial concept and what the amount of money associated means for the company. 
+                Analyze the information and give some advice as to whether the company finds itself in good standing.
+                You should try to relay the financial information in such a way that it is easily understandable,
+                as if it were being written for someone who is a beginner in understanding the stock market.
+            """;
+        }
+
+        [HttpPost]
         public async Task<ActionResult> GetAISummarization(string api_key)
         {
-
-            // would have been set upon submitting parameters for stock financial analyzation
-            // might need to change this
+            // method to complete AI Summarization by using OpenAI Nuget Package
             string q = _httpContextAccessor.HttpContext.Session.GetString("Quarter").ToString();
             string t = _httpContextAccessor.HttpContext.Session.GetString("Ticker").ToString();
             string y = _httpContextAccessor.HttpContext.Session.GetString("Year").ToString();
             int year_int = Int32.Parse(y);
 
-            Runtime.PythonDLL = @"C:\Users\asheet3\.nuget\packages\pythonnet\3.0.4\lib\netstandard2.0\Python.Runtime.dll";
-            PythonEngine.Initialize();
-
             if (q != null && t != null && y != null)
             {
-                using (Py.GIL())
+                StringBuilder contentBuilder = new();
+
+                // instantiate openAI chat model using api
+                ChatClient client = new(
+                    model: "gpt-4o",
+                    apiKey: api_key
+                );
+
+                // retrieve stock information
+                StockEconomicalInfo stockRecord = await _dbContext.GetSpecificStockReport(q, t, year_int);
+
+                // call func to create specific viewmodel of stock information to pass to AI analyzation
+                StockRecordInfoForAIViewModel infoForAi = ConvertStockRecord(stockRecord);
+
+                List<ChatMessage> messages = [
+                    returnPrompt(),
+                    Newtonsoft.Json.JsonConvert.SerializeObject(infoForAi)
+                ];
+
+                // process chunks of results as they come in
+                AsyncCollectionResult<StreamingChatCompletionUpdate> completionUpdates = client.CompleteChatStreamingAsync(messages);
+
+                await foreach (StreamingChatCompletionUpdate completionUpdate in completionUpdates)
                 {
-                    // instantiate the api as a callable class
-                    dynamic api_class = Py.Import(@"Scripts\openAI_api.py").GetAttr("OpenAI");
-
-                    // retrieve stock information
-                    StockEconomicalInfo stockRecord = await _dbContext.GetSpecificStockReport(q, t, year_int);
-
-                    // call func to create specific viewmodel of stock information to pass to AI analyzation
-                    StockRecordInfoForAIViewModel infoForAi = ConvertStockRecord(stockRecord);
-
-                    // convert to json
-                    var opt = new JsonSerializerOptions() { WriteIndented = true };
-                    string json_str = JsonSerializer.Serialize(infoForAi, opt);
-
-                    // if the json str is not null/empty create openAI class with api key and stock json
-                    if (!string.IsNullOrEmpty(json_str))
+                    if (completionUpdate.ContentUpdate.Count > 0)
                     {
-                        // create class instantiation with api key and json of financial information
-                        dynamic openAI_instance = api_class(api_key, json_str);
+                        Console.Write(completionUpdate.ContentUpdate[0].Text);
                     }
                 }
+
+                return View("");
             }
             else
             {
@@ -168,7 +190,8 @@ namespace AleStock.Controllers.Stock
                 TempData["ValidationMsg"] = "One of your values was missing for the AI summarization. Please re-submit your choices.";
                 return View("FinanceAnalyzation");
             }
-
         }
+
+
     }
 }

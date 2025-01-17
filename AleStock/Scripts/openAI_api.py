@@ -29,7 +29,7 @@ class OpenAI:
         ]
         
         data = {
-            "model": "gpt-40-mini",
+            "model": "gpt-4o-mini",
             "messages": messages,
             "temperature": 0.0,
             "user": "self"
