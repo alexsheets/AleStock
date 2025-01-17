@@ -58,12 +58,12 @@ namespace AleStock.Controllers.Stock
         {
             return """
                 You will act as a financial analyst. 
-                You will be given some financial information for one fiscal quarter relating to a particular company in a JSON string.
+                You will be given some financial information for one fiscal quarter relating to a particular company in the format of a JSON string.
                 The financial concepts are passed in the JSON as keys. 
-                The values of the JSON are the associated amounts of money the company reported for the quarter.
+                The amounts of money the company reported for the quarter for said financial concept are passed in the JSON as values.
                 For each financial concept, return a new message briefly explainining said concept and what the amount of money associated means for the company. 
-                Analyze the information and advise as to whether the company finds itself in good standing.
-                You should try to relay the financial information in such a way that it is easily understandable,
+                Analyze the information and advise as to whether the company finds itself in good financial standing.
+                You should try to relay the information in such a way that it is easily understandable,
                 as if it were being written for someone who is a beginner in understanding the stock market.
             """;
         }
