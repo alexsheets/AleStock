@@ -53,6 +53,21 @@ namespace AleStock.Controllers.Stock
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        // helper func to return string prompt
+        public string returnPrompt()
+        {
+            return """
+                You will act as a financial analyst. 
+                You will be given some financial information for one fiscal quarter relating to a particular company in a JSON string.
+                The financial concepts are passed in the JSON as keys. 
+                The values of the JSON are the associated amounts of money the company reported for the quarter.
+                For each financial concept, return a new message briefly explainining said concept and what the amount of money associated means for the company. 
+                Analyze the information and advise as to whether the company finds itself in good standing.
+                You should try to relay the financial information in such a way that it is easily understandable,
+                as if it were being written for someone who is a beginner in understanding the stock market.
+            """;
+        }
+
         // simple function to convert a stock record to the necessary information for AI analyzation
         public StockRecordInfoForAIViewModel ConvertStockRecord(StockEconomicalInfo record)
         {
@@ -69,7 +84,37 @@ namespace AleStock.Controllers.Stock
                 DebtRatio = record.DebtRatio,
                 DividendPayoutRatio = record.DividendPayoutRatio
             };
+
             return infoForAi;
+        }
+
+        public AIFinanceSummaryViewModel CreateAISummaryViewModel(StockRecordInfoForAIViewModel record, List<string> ai_responses)
+        {
+            AIFinanceSummaryViewModel vm = new AIFinanceSummaryViewModel()
+            {
+                GrossProfitMargin = record.GrossProfitMargin,
+                OperatingMargin = record.OperatingMargin,
+                NetProfitMargin = record.NetProfitMargin,
+                ReturnOnEquity = record.ReturnOnEquity,
+                ReturnOnAssets = record.ReturnOnAssets,
+                ReturnOnInvested = record.ReturnOnInvested,
+                LiquidityRatio = record.LiquidityRatio,
+                LiabilitiesToEquityRatio = record.LiabilitiesToEquityRatio,
+                DebtRatio = record.DebtRatio,
+                DividendPayoutRatio = record.DividendPayoutRatio,
+                GrossProfitMarginResponse = ai_responses[0],
+                OperatingMarginResponse = ai_responses[1],
+                NetProfitMarginResponse = ai_responses[2],
+                ReturnOnEquityResponse = ai_responses[3],
+                ReturnOnAssetsResponse = ai_responses[4],
+                ReturnOnInvestedResponse = ai_responses[5],
+                LiquidityRatioResponse = ai_responses[6],
+                LiabilitiesToEquityRatioResponse = ai_responses[7],
+                DebtRatioResponse = ai_responses[8],
+                DividendPayoutRatioResponse = ai_responses[9]
+            };
+
+            return vm;
         }
 
         public async Task<ActionResult> CheckForAPIKeys() {
@@ -127,23 +172,10 @@ namespace AleStock.Controllers.Stock
             }
         }
 
-        public string returnPrompt()
-        {
-            return """
-                You will act as a financial analyst. 
-                You will be given some financial information for one fiscal quarter relating to a particular company in a JSON string.
-                The financial concepts are passed in the JSON as keys. 
-                The values of the JSON are the associated amounts of money the company reported for the quarter.
-                Briefly explain each related financial concept and what the amount of money associated means for the company. 
-                Analyze the information and give some advice as to whether the company finds itself in good standing.
-                You should try to relay the financial information in such a way that it is easily understandable,
-                as if it were being written for someone who is a beginner in understanding the stock market.
-            """;
-        }
-
         [HttpPost]
         public async Task<ActionResult> GetAISummarization(string api_key)
         {
+
             // method to complete AI Summarization by using OpenAI Nuget Package
             string q = _httpContextAccessor.HttpContext.Session.GetString("Quarter").ToString();
             string t = _httpContextAccessor.HttpContext.Session.GetString("Ticker").ToString();
@@ -155,6 +187,7 @@ namespace AleStock.Controllers.Stock
                 StringBuilder contentBuilder = new();
 
                 // instantiate openAI chat model using api
+                // https://www.nuget.org/packages/OpenAI
                 ChatClient client = new(
                     model: "gpt-4o",
                     apiKey: api_key
@@ -166,29 +199,45 @@ namespace AleStock.Controllers.Stock
                 // call func to create specific viewmodel of stock information to pass to AI analyzation
                 StockRecordInfoForAIViewModel infoForAi = ConvertStockRecord(stockRecord);
 
-                List<ChatMessage> messages = [
+                List<ChatMessage> prompt_messages = [
                     returnPrompt(),
                     Newtonsoft.Json.JsonConvert.SerializeObject(infoForAi)
                 ];
 
-                // process chunks of results as they come in
-                AsyncCollectionResult<StreamingChatCompletionUpdate> completionUpdates = client.CompleteChatStreamingAsync(messages);
+                List<ChatMessage> response_messages = [];
 
-                await foreach (StreamingChatCompletionUpdate completionUpdate in completionUpdates)
+                // process chunks of results as they come in
+                // AsyncCollectionResult<StreamingChatCompletionUpdate> completionUpdates = client.CompleteChatStreamingAsync(messages);
+
+                // in this case we want to process entirety of responses at once so we can increment through them
+                // as we already know the order they should return in
+                ChatCompletion completion = await client.CompleteChatAsync(prompt_messages);
+                List<string> message_stream = new List<string>();
+
+                // should be 10 responses
+                for (int i = 0; i < 10; i++)
                 {
-                    if (completionUpdate.ContentUpdate.Count > 0)
+                    if (completion.Content[i].Text == null)
                     {
-                        Console.Write(completionUpdate.ContentUpdate[0].Text);
+                        TempData["ValidationMsg"] = "The OpenAI message response incurred an error. Please try again.";
+                        return RedirectToAction("FinanceAnalyzation", "Stock");
+                    } else
+                    {
+                        message_stream.Add(completion.Content[i].Text);
                     }
                 }
 
-                return View("");
+                // call function with stockrecordinfoviewmodel and message_stream
+                // to create viewmodel for ai summarization page
+                AIFinanceSummaryViewModel vm = CreateAISummaryViewModel(infoForAi, message_stream);
+
+                return View("AIFinanceSummarization", vm);
             }
             else
             {
                 // if any value empty, return to the stock choice screen with error msg
                 TempData["ValidationMsg"] = "One of your values was missing for the AI summarization. Please re-submit your choices.";
-                return View("FinanceAnalyzation");
+                return RedirectToAction("FinanceAnalyzation", "Stock");
             }
         }
 
