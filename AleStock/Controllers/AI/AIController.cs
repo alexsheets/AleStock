@@ -88,10 +88,13 @@ namespace AleStock.Controllers.Stock
             return infoForAi;
         }
 
-        public AIFinanceSummaryViewModel CreateAISummaryViewModel(StockRecordInfoForAIViewModel record, List<string> ai_responses)
+        public AIFinanceSummaryViewModel CreateAISummaryViewModel(StockEconomicalInfo info, StockRecordInfoForAIViewModel record, List<string> ai_responses)
         {
             AIFinanceSummaryViewModel vm = new AIFinanceSummaryViewModel()
             {
+                Ticker = info.Ticker,
+                Quarter = info.Quarter,
+                Year = info.Year,
                 GrossProfitMargin = record.GrossProfitMargin,
                 OperatingMargin = record.OperatingMargin,
                 NetProfitMargin = record.NetProfitMargin,
@@ -219,7 +222,7 @@ namespace AleStock.Controllers.Stock
                 {
                     if (completion.Content[i].Text == null)
                     {
-                        TempData["ValidationMsg"] = "The OpenAI message response incurred an error. Please try again.";
+                        TempData["ValidationMsg"] = "The OpenAI response incurred an error. Please try again.";
                         return RedirectToAction("FinanceAnalyzation", "Stock");
                     } else
                     {
@@ -229,7 +232,7 @@ namespace AleStock.Controllers.Stock
 
                 // call function with stockrecordinfoviewmodel and message_stream
                 // to create viewmodel for ai summarization page
-                AIFinanceSummaryViewModel vm = CreateAISummaryViewModel(infoForAi, message_stream);
+                AIFinanceSummaryViewModel vm = CreateAISummaryViewModel(stockRecord, infoForAi, message_stream);
 
                 return View("AIFinanceSummarization", vm);
             }

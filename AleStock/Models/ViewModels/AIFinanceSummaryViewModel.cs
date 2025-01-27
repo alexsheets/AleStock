@@ -2,6 +2,9 @@
 {
     public class AIFinanceSummaryViewModel
     {
+        public string Ticker { get; set; }
+        public string Quarter { get; set; }
+        public int Year { get; set; }
         public string GrossProfitMargin { get; set; }
         public string OperatingMargin { get; set; }
         public string NetProfitMargin { get; set; }

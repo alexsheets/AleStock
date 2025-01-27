@@ -1,7 +1,7 @@
 ﻿IN ORDER OF PRIORITY:
 --> adding testing
---> map out user flow logic of current setup
---> fully flesh out AI responses and tweak accordingly
+--> fully flesh out AI responses and tweak accordingly/build out AIFinanceSummarization page
+--> build out frontend / add react to stack
 
 --> create dropdown for users to create stocks by scraping them?
 --> check into using CSnakes instead of PythonNET
@@ -15,4 +15,4 @@ IDEAS:
 --> allow users to set weights on the financial report to give the stock a certain score as to whether it suits their wants
 --> implement different AI models on stock for different periods (volatility) to create predicted values based on the stocks chart/data
 --> add glossary of financial/stock terminology 
---> build out frontend more/potentially add react to stack
+--> implement backtesting

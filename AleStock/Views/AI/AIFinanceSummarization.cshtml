@@ -1,1 +1,104 @@
-﻿
+﻿@model AleStock.Models.ViewModels.AIFinanceSummaryViewModel
+
+<style>
+
+    #AIReportView {
+        margin-top: 7%;
+        padding-bottom: 7%;
+        text-align: center !important;
+    }
+
+    label {
+        display: block;
+    }
+
+    .inputDiv1 {
+        display: inline-block;
+    }
+
+    .h2 {
+        display: inline-block;
+        text-align: center !important;
+    }
+
+</style>
+
+
+<div id="AIReportView" class="text-center" style="margin-top:4%;">
+
+    @if (TempData["ValidationMsg"] != null)
+    {
+        <div class="form-row" id="AlertDiv">
+            <div class="alert alert-danger text-center" style="width:400px;margin:0 auto;margin-top:2%;" role="alert">
+                @TempData["ValidationMsg"]
+            </div>
+        </div>
+    }
+
+    <h4 style="margin-top:3%;text-decoration:underline;">Quick Stock Report</h4>
+
+    <p><center><hr width="75%" /></center></p>
+    <p>
+        <label>Ticker, Quarter and Year of financials requested:</label>
+        <div class="inputDiv2">
+            @Model.Ticker, @Model.Quarter, @Model.Year
+        </div>
+    </p>
+    <p>
+        <label>Profit metrics with AI analyzation:</label>
+        <div class="inputDiv2">
+            <h5>Gross Profit Margin: @Model.GrossProfitMargin</h5>
+            @Model.GrossProfitMarginResponse
+        </div>
+        <div class="inputDiv2">
+            <h5>Net Profit Margin: @Model.NetProfitMargin</h5>
+            @Model.NetProfitMarginResponse
+        </div>
+        <div class="inputDiv2">
+            <h5>Operating Margin: @Model.OperatingMargin</h5>
+            @Model.OperatingMarginResponse
+        </div>
+        <label>Return metrics:</label>
+        <div class="inputDiv2">
+            <h5>Return on Assets: @Model.ReturnOnAssets</h5>
+            @Model.ReturnOnAssetsResponse
+        </div>
+        <div class="inputDiv2">
+            <h5>Return on Equity: @Model.ReturnOnEquity</h5>
+            @Model.ReturnOnEquityResponse
+        </div>
+        <div class="inputDiv2">
+            <h5>Return on Investments: @Model.ReturnOnInvested</h5>
+            @Model.ReturnOnInvestedResponse
+        </div>
+    </p>
+    <p>
+        <label>Other important metrics with AI analyzation:</label>
+        <div class="inputDiv2">
+            <h5>Liquidity Ratio: @Model.LiquidityRatio</h5>
+            @Model.LiquidityRatioResponse
+        </div>
+        <div class="inputDiv2">
+            <h5>Liabilities to Equity ratio: @Model.LiabilitiesToEquityRatio</h5>
+            @Model.LiabilitiesToEquityRatioResponse
+        </div>
+        <div class="inputDiv2">
+            <h5>Debt ratio: @Model.DebtRatio</h5>
+            @Model.DebtRatioResponse
+        </div>
+        <div class="inputDiv2">
+            <h5>Dividend Payout ratio: @Model.DividendPayoutRatio</h5>
+            @Model.DividendPayoutRatioResponse
+        </div>
+    </p>
+
+
+    <a href="@Url.Action("FinanceAnalyzation","Stock")">
+        <h3 id="LinkToItems"><span><i class="fas fa-sign-out-alt fa-1x pr-2"></i>Click here to view a new financial report.</span></h3>
+    </a>
+
+
+
+
+
+</div>
