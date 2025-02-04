@@ -106,9 +106,10 @@ public partial class StockDbContext : DbContext
 
 
     // AUTH DB operations
-    public async Task CreateUser(string email, string password)
+    public async Task<Supabase.Gotrue.Session> CreateUser(string email, string password)
     {
-        var session = await _supabaseClient.Auth.SignUp(email, password);   
+        var session = await _supabaseClient.Auth.SignUp(email, password);
+        return session;
     }
 
     public async Task<Supabase.Gotrue.Session> SignIn(string email, string password)

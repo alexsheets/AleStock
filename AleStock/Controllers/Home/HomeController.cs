@@ -41,7 +41,7 @@ namespace AleStock.Controllers.Home
             }
             else
             {
-                TempData["ValidationMsg"] = "Error with the current authentication session. Please re-login.";
+                TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
                 return View("Index");
             }
 
@@ -56,9 +56,17 @@ namespace AleStock.Controllers.Home
                 return View("Register");
             }
 
-            await _dbContext.CreateUser(credentials.Username, credentials.Password);
+            Supabase.Gotrue.Session session = await _dbContext.CreateUser(credentials.Username, credentials.Password);
 
-            return View("Index");
+            if (session != null)
+            {
+                return View("HomePage");
+            }
+            else
+            {
+                TempData["ValidationMsg"] = "Error with your login. Please retry or register.";
+                return View("Index");
+            }
 
         }
 
@@ -71,10 +79,16 @@ namespace AleStock.Controllers.Home
                 return View("Index");
             }
 
-            await _dbContext.SignIn(credentials.Username, credentials.Password);
+            Supabase.Gotrue.Session session = await _dbContext.SignIn(credentials.Username, credentials.Password);
 
-            return View("HomePage");
-
+            if (session != null)
+            {
+                return View("HomePage");
+            } else
+            {
+                TempData["ValidationMsg"] = "Error with your login. Please retry or register.";
+                return View("Index");
+            }
         }
 
         [HttpPost]
