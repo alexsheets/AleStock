@@ -1,7 +1,7 @@
 ﻿IN ORDER OF PRIORITY:
 --> adding testing
 --> fully flesh out AI responses and tweak accordingly/build out AIFinanceSummarization page
---> build out frontend / add react to stack
+--> build out frontend / either look into using htmx or add react to stack?
 
 --> create dropdown for users to create stocks by scraping them?
 --> check into using CSnakes instead of PythonNET
@@ -10,6 +10,7 @@ DOCS:
 https://marketstack.com/documentation
 https://supabase.com/docs/reference/csharp/start
 https://www.aspsnippets.com/Articles/3522/Add-React-to-existing-ASPNet-Core-Project/
+https://www.jetbrains.com/guide/dotnet/tutorials/htmx-aspnetcore/
 
 
 IDEAS:

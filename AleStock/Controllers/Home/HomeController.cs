@@ -32,6 +32,21 @@ namespace AleStock.Controllers.Home
             return View();
         }
 
+        public IActionResult HomePage()
+        {
+            Supabase.Gotrue.Session session = _dbContext.GetSession();
+            if (session != null)
+            {
+                return View();
+            }
+            else
+            {
+                TempData["ValidationMsg"] = "Error with the current authentication session. Please re-login.";
+                return View("Index");
+            }
+
+        }
+
         [HttpPost]
         public async Task<ActionResult> Register(SignIn credentials)
         {
@@ -43,7 +58,7 @@ namespace AleStock.Controllers.Home
 
             await _dbContext.CreateUser(credentials.Username, credentials.Password);
 
-            return View("Index", "Home");
+            return View("Index");
 
         }
 
@@ -58,7 +73,7 @@ namespace AleStock.Controllers.Home
 
             await _dbContext.SignIn(credentials.Username, credentials.Password);
 
-            return View("FinanceAnalyzation", "Stock");
+            return View("HomePage");
 
         }
 

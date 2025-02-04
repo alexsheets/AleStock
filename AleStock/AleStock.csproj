@@ -48,7 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Include="wwwroot\scripts\Example.jsx" />
+    <Folder Include="wwwroot\scripts\" />
   </ItemGroup>
 
 </Project>

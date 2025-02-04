@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Supabase;
+using Supabase.Interfaces;
 using Supabase.Postgrest;
 // using Supabase.Interfaces;
 
@@ -110,9 +111,16 @@ public partial class StockDbContext : DbContext
         var session = await _supabaseClient.Auth.SignUp(email, password);   
     }
 
-    public async Task SignIn(string email, string password)
+    public async Task<Supabase.Gotrue.Session> SignIn(string email, string password)
     {
         var session = await _supabaseClient.Auth.SignIn(email, password);
+        return session;
+    }
+
+    public Supabase.Gotrue.Session GetSession()
+    {
+        var session = _supabaseClient.Auth.CurrentSession;
+        return session;
     }
 
 }
