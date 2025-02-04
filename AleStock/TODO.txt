@@ -9,6 +9,7 @@
 DOCS:
 https://marketstack.com/documentation
 https://supabase.com/docs/reference/csharp/start
+https://www.aspsnippets.com/Articles/3522/Add-React-to-existing-ASPNet-Core-Project/
 
 
 IDEAS:
