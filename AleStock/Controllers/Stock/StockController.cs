@@ -27,93 +27,19 @@ namespace AleStock.Controllers.Stock
             _dbContext = new StockDbContext(configuration);
         }
 
-        /*
-         * Functions simply for returning the associated views
-         */
-
-        public IActionResult FinanceAnalyzation()
-        {
-            Supabase.Gotrue.Session session = _dbContext.GetSession();
-            if (session != null)
-            {
-                return View();
-            }
-            else
-            {
-                TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
-                return View("Index", "Home");
-            }
-        }
-
-        public IActionResult SpecificFinancials() 
-        {
-            Supabase.Gotrue.Session session = _dbContext.GetSession();
-            if (session != null)
-            {
-                return View();
-            }
-            else
-            {
-                TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
-                return View("Index", "Home");
-            }
-        }
-
-        public IActionResult Chat() 
-        {
-            Supabase.Gotrue.Session session = _dbContext.GetSession();
-            if (session != null)
-            {
-                return View();
-            }
-            else
-            {
-                TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
-                return View("Index", "Home");
-            }
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        public IActionResult SupplyKey() 
-        {
-            Supabase.Gotrue.Session session = _dbContext.GetSession();
-            if (session != null)
-            {
-                return View();
-            }
-            else
-            {
-                TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
-                return View("Index", "Home");
-            }
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-
-        // helper functions to return all potential years and quarters for reviewing financials
         public JsonResult getYears()
         {
             try
             {
                 List<SelectListItem> Years = new List<SelectListItem>
                 {
-                    new SelectListItem() { Text = "2017", Value = "2017" },
                     new SelectListItem() { Text = "2018", Value = "2018" },
                     new SelectListItem() { Text = "2019", Value = "2019" },
                     new SelectListItem() { Text = "2020", Value = "2020" },
                     new SelectListItem() { Text = "2021", Value = "2021" },
                     new SelectListItem() { Text = "2022", Value = "2022" },
                     new SelectListItem() { Text = "2023", Value = "2023" },
-                    new SelectListItem() { Text = "2024", Value = "2024" },
+                    new SelectListItem() { Text = "2024", Value = "2024" }
                 };
 
                 return Json(Years);
@@ -143,6 +69,84 @@ namespace AleStock.Controllers.Stock
                 return Json("");
             }
         }
+
+        /*
+         * Functions simply for returning the associated views
+         */
+
+        [HttpGet]
+        public ActionResult FinanceAnalyzation()
+        {
+            //Supabase.Gotrue.Session session = _dbContext.GetSession();
+            //if (session != null)
+            //{
+            //    return View("FinanceAnalyzation");
+            //}
+            //else
+            //{
+            //    TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
+            //    return RedirectToAction("Index", "Home");
+            //}
+
+            //return View(new StockChoicesViewModel());
+            return View();
+        }
+
+        public IActionResult SpecificFinancials() 
+        {
+            Supabase.Gotrue.Session session = _dbContext.GetSession();
+            if (session != null)
+            {
+                return View("SpecificFinancials");
+            }
+            else
+            {
+                TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        public IActionResult Chat() 
+        {
+            //Supabase.Gotrue.Session session = _dbContext.GetSession();
+            //if (session != null)
+            //{
+            //    return View();
+            //}
+            //else
+            //{
+            //    TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
+            //    return View("Index", "Home");
+            //}
+
+            return View("Chat");
+        }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public IActionResult SupplyKey() 
+        {
+            Supabase.Gotrue.Session session = _dbContext.GetSession();
+            if (session != null)
+            {
+                return View();
+            }
+            else
+            {
+                TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
+                return View("Index", "Home");
+            }
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
 
         [HttpPost]
         public async Task<ActionResult> SubmitAPIKeys([DataSourceRequest] DataSourceRequest request, APIKeysViewModel vm)

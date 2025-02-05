@@ -56,6 +56,14 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseHttpsRedirection();
+app.UseSession();
+app.UseRouting();
+app.MapRazorPages();
+
+app.UseAuthorization();
+app.UseAuthentication();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
@@ -70,14 +78,6 @@ app.UseReact(config =>
     config.AddScript("~/scripts/Example.jsx");
 });
 app.UseStaticFiles();
-
-app.UseHttpsRedirection();
-app.UseSession();
-app.UseRouting();
-app.MapRazorPages();
-
-app.UseAuthorization();
-app.UseAuthentication();
 
 
 app.Run();
