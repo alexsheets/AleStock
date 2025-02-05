@@ -26,6 +26,20 @@
         text-align: center;
     }
 
+    #signInFormDiv {
+        width: 300px;
+        margin: 0 auto;
+        margin-top: 10%;
+        margin-bottom: 3%;
+        text-align: center;
+    }
+
+    #Username, #Password {
+        width: 300px;
+        margin: 0 auto;
+        margin-top: 3%;
+    }
+
 </style>
 
 <div>
@@ -34,11 +48,11 @@
 
         <div id="signInFormDiv">
 
-            <div>
+            <div id="Username">
                 <label for="UserName">Username</label>
                 @Html.TextBoxFor(u => u.Username, new { @class = "form-control form-control-sm", @placeholder = "Email", autocomplete = "off" })
             </div>
-            <div style="margin-top: 3%;">
+            <div id="Password">
                 <label for="Password">Password</label>
                 @Html.PasswordFor(u => u.Password, new { @class = "form-control form-control-sm", @placeholder = "Password", autocomplete = "off" })
             </div>
@@ -49,7 +63,7 @@
 
             <br /><br />
             <a href="@Url.Action("Register","Home")">
-                <h3 id="LinkToItems"><span><i class="fas fa-sign-out-alt fa-1x pr-2"></i>Unable to login? Click here.</span></h3>
+                <h3 id="LinkToItems"><span><i class="fas fa-sign-out-alt fa-1x pr-2"></i>Unable to login? Click here to register.</span></h3>
             </a>
 
         </div>
