@@ -33,17 +33,44 @@ namespace AleStock.Controllers.Stock
 
         public IActionResult FinanceAnalyzation()
         {
-            return View();
+            Supabase.Gotrue.Session session = _dbContext.GetSession();
+            if (session != null)
+            {
+                return View();
+            }
+            else
+            {
+                TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
+                return View("Index", "Home");
+            }
         }
 
         public IActionResult SpecificFinancials() 
         {
-            return View();
+            Supabase.Gotrue.Session session = _dbContext.GetSession();
+            if (session != null)
+            {
+                return View();
+            }
+            else
+            {
+                TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
+                return View("Index", "Home");
+            }
         }
 
         public IActionResult Chat() 
         {
-            return View();
+            Supabase.Gotrue.Session session = _dbContext.GetSession();
+            if (session != null)
+            {
+                return View();
+            }
+            else
+            {
+                TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
+                return View("Index", "Home");
+            }
         }
 
         public IActionResult Privacy()
@@ -53,7 +80,16 @@ namespace AleStock.Controllers.Stock
 
         public IActionResult SupplyKey() 
         {
-            return View();
+            Supabase.Gotrue.Session session = _dbContext.GetSession();
+            if (session != null)
+            {
+                return View();
+            }
+            else
+            {
+                TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
+                return View("Index", "Home");
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
