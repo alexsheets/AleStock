@@ -1,6 +1,6 @@
-/*.sidebar .top-row {
+.sidebar .top-row {
     background-color: rgba(0,0,0,0.4);
-}*/
+}
 
 .sidebar .navbar-brand {
     font-size: 1.1rem;
@@ -18,33 +18,32 @@
     padding-bottom: 0.5rem;
 }
 
-    .sidebar .nav-item:first-of-type {
-        padding-top: 1rem;
-    }
+.sidebar .nav-item:first-of-type {
+    padding-top: 1rem;
+}
 
-    .sidebar .nav-item:last-of-type {
-        padding-bottom: 1rem;
-    }
+.sidebar .nav-item:last-of-type {
+    padding-bottom: 1rem;
+}
 
-    .sidebar .nav-item a {
-        color: #d7d7d7;
-        border-radius: 4px;
-        height: 3rem;
-        display: flex;
-        align-items: center;
-        line-height: 3rem;
-    }
+.sidebar .nav-item a {
+    color: #d7d7d7;
+    border-radius: 4px;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    line-height: 3rem;
+}
 
-        .sidebar .nav-item a.active {
-            background-color: rgba(255,255,255,0.25);
-            color: white;
-        }
+.sidebar .nav-item a.active {
+    background-color: rgba(255,255,255,0.25);
+    color: white;
+}
 
-        .sidebar .nav-item a:hover {
-            background-color: rgba(255,255,255,0.1);
-            color: white;
-        }
-
+.sidebar .nav-item a:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+}
 
 .nav-link a {
     color: white;
@@ -54,30 +53,6 @@
 .top-row {
     margin: 0 auto;
 }
-
-.sidebar {
-    margin: 0;
-    padding: 0;
-    /*background-image: linear-gradient(0deg, rgb(108, 68, 196) 0%, #2e1350 100%);*/
-    /*width: 225px;
-    position: fixed;
-    height: 100%;*/
-    overflow: auto;
-}
-
-
-.k-edit-form-container {
-    width: 500px;
-    box-sixing: unset;
-}
-
-    .k-edit-form-container .k-edit-buttons {
-        width: 500px;
-    }
-
-    .k-edit-form-container .k-grid.cancel {
-        margin-right: 3%;
-    }
 
 .k-textbox {
     width: 200px;
@@ -104,6 +79,8 @@
 }
 
 .sidebar {
+    margin: 0;
+    padding: 0;
     width: 225px;
     position: fixed !important;
     height: 100%;
@@ -165,7 +142,7 @@ span.homepage_alelogotext {
     -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-lsu_icon:before {
+.icon-ale_icon:before {
     content: "\e603";
 }
 
@@ -177,28 +154,3 @@ div.alelogo p {
 div.alelogo.leftright {
     height: 115.33px;
 }
-
-/*.top-row {
-    background-color: rgba(70,29,124,1.00);
-    background-image: linear-gradient( 180deg, rgba(70,29,124,1.00) 0%, rgba(52,21,92,1.00) 100%);
-    background-image: linear-gradient(0deg, #34155c 0%, #2e1350 100%);
-}
-
-.sidebar {
-    background-image: linear-gradient(0deg, rgb(108, 68, 196) 0%, #34155c 100%);
-    background-image: linear-gradient(0deg, #2e1350 0%, #34155c 100%);
-}*/
-
-/*.k-button {
-    background-color: #34155c;
-    border-color: #34155c;*/
-    /* background-color: dimgray; */
-    /*color: #fccf22;
-}
-
-.k-button:hover {
-    background-color: #fccf22;
-    border-color: none;*/
-    /* background-color: dimgray; */
-    /*color: #34155c;
-}*/
