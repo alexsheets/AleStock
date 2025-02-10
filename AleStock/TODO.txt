@@ -2,9 +2,10 @@
 --> adding testing
 --> fully flesh out AI responses and tweak accordingly/build out AIFinanceSummarization page
 --> build out frontend / either look into using htmx or add react to stack?
+--> stock regressions using ML.NET
 
 --> create dropdown for users to create stocks by scraping them?
---> check into using CSnakes instead of PythonNET
+--> check into using CSnakes instead of PythonNET (X)
 
 DOCS:
 https://marketstack.com/documentation
