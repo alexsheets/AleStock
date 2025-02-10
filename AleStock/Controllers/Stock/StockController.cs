@@ -6,6 +6,7 @@ using Kendo.Mvc.UI;
 using AleStock.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json.Linq;
+using Supabase.Gotrue;
 
 
 namespace AleStock.Controllers.Stock
@@ -70,31 +71,38 @@ namespace AleStock.Controllers.Stock
             }
         }
 
+        // function used to create new session based off passed tokens
+        public async Task<Session> SetSessionForControllerAsync()
+        {
+            string currToken = _httpContextAccessor.HttpContext.Session.GetString("currToken");
+            string refrToken = _httpContextAccessor.HttpContext.Session.GetString("refrToken");
+
+            Session session = await _dbContext.SetSessionAsync(currToken, refrToken);
+            return session;
+        }
         /*
          * Functions simply for returning the associated views
          */
 
         [HttpGet]
-        public ActionResult FinanceAnalyzation()
+        public async Task<ActionResult> FinanceAnalyzationAsync()
         {
-            //Supabase.Gotrue.Session session = _dbContext.GetSession();
-            //if (session != null)
-            //{
-            //    return View("FinanceAnalyzation");
-            //}
-            //else
-            //{
-            //    TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
-            //    return RedirectToAction("Index", "Home");
-            //}
+            Session session = await SetSessionForControllerAsync();
+            if (session != null)
+            {
+                return View("FinanceAnalyzation");
+            }
+            else
+            {
+                TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
+                return RedirectToAction("Index", "Home");
+            }
 
-            //return View(new StockChoicesViewModel());
-            return View();
         }
 
-        public IActionResult SpecificFinancials() 
+        public async Task<IActionResult> SpecificFinancials() 
         {
-            Supabase.Gotrue.Session session = _dbContext.GetSession();
+            Session session = await SetSessionForControllerAsync();
             if (session != null)
             {
                 return View("SpecificFinancials");
@@ -106,20 +114,18 @@ namespace AleStock.Controllers.Stock
             }
         }
 
-        public IActionResult Chat() 
+        public async Task<IActionResult> Chat() 
         {
-            //Supabase.Gotrue.Session session = _dbContext.GetSession();
-            //if (session != null)
-            //{
-            //    return View();
-            //}
-            //else
-            //{
-            //    TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
-            //    return View("Index", "Home");
-            //}
-
-            return View("Chat");
+            Session session = await SetSessionForControllerAsync();
+            if (session != null)
+            {
+                return View();
+            }
+            else
+            {
+                TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         public IActionResult Privacy()
@@ -129,16 +135,7 @@ namespace AleStock.Controllers.Stock
 
         public IActionResult SupplyKey() 
         {
-            Supabase.Gotrue.Session session = _dbContext.GetSession();
-            if (session != null)
-            {
-                return View();
-            }
-            else
-            {
-                TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
-                return View("Index", "Home");
-            }
+            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

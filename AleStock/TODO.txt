@@ -4,6 +4,10 @@
 --> build out frontend / either look into using htmx or add react to stack?
 --> stock regressions using ML.NET
 
+--> figure out how to keep supabase session across project rather than scoped within controllers
+	--> for now, solution is to pass current and refresh tokens using httpcontext (cookies) and create new session at new controller
+
+
 --> create dropdown for users to create stocks by scraping them?
 --> check into using CSnakes instead of PythonNET (X)
 

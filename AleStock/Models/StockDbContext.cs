@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Supabase;
+using Supabase.Gotrue;
 using Supabase.Interfaces;
 using Supabase.Postgrest;
 // using Supabase.Interfaces;
@@ -115,12 +116,25 @@ public partial class StockDbContext : DbContext
     public async Task<Supabase.Gotrue.Session> SignIn(string email, string password)
     {
         var session = await _supabaseClient.Auth.SignIn(email, password);
+        
         return session;
     }
 
     public Supabase.Gotrue.Session GetSession()
     {
         var session = _supabaseClient.Auth.CurrentSession;
+        return session;
+    }
+
+    public async Task<Supabase.Gotrue.Session> RefreshSession()
+    {
+        var session = await _supabaseClient.Auth.RefreshSession();
+        return session;
+    }
+
+    public async Task<Session> SetSessionAsync(string token1, string token2)
+    {
+        var session = await _supabaseClient.Auth.SetSession(token1, token2);
         return session;
     }
 

@@ -8,6 +8,7 @@ using System.Text.Json;
 using OpenAI.Chat;
 using System.ClientModel;
 using System.Text;
+using Supabase.Gotrue;
 
 namespace AleStock.Controllers.Stock
 {
@@ -28,21 +29,31 @@ namespace AleStock.Controllers.Stock
             _dbContext = new StockDbContext(configuration);
         }
 
+        // function to set session using refresh tokens
+        public async Task<Session> SetSessionForControllerAsync()
+        {
+            string currToken = _httpContextAccessor.HttpContext.Session.GetString("currToken");
+            string refrToken = _httpContextAccessor.HttpContext.Session.GetString("refrToken");
+
+            Session session = await _dbContext.SetSessionAsync(currToken, refrToken);
+            return session;
+        }
+
         /*
          * Functions simply for returning the associated views
          */
 
-        public IActionResult AIFinanceSummarization()
+        public async Task<IActionResult> AIFinanceSummarization()
         {
-            Supabase.Gotrue.Session session = _dbContext.GetSession();
+            Session session = await SetSessionForControllerAsync();
             if (session != null)
             {
-                return View();
+                return View("FinanceAnalyzation");
             }
             else
             {
                 TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
-                return View("Index", "Home");
+                return RedirectToAction("Index", "Home");
             }
         }
 
@@ -53,17 +64,10 @@ namespace AleStock.Controllers.Stock
 
         public IActionResult SupplyKey() 
         {
-            Supabase.Gotrue.Session session = _dbContext.GetSession();
-            if (session != null)
-            {
-                return View();
-            }
-            else
-            {
-                TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
-                return View("Index", "Home");
-            }
+            return View();
         }
+
+        
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

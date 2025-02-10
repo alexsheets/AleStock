@@ -35,6 +35,7 @@ namespace AleStock.Controllers.Home
         public IActionResult HomePage()
         {
             Supabase.Gotrue.Session session = _dbContext.GetSession();
+
             if (session != null)
             {
                 return View();
@@ -80,6 +81,9 @@ namespace AleStock.Controllers.Home
             }
 
             Supabase.Gotrue.Session session = await _dbContext.SignIn(credentials.Username, credentials.Password);
+
+            _httpContextAccessor.HttpContext.Session.SetString("currToken", session.AccessToken);
+            _httpContextAccessor.HttpContext.Session.SetString("refrToken", session.RefreshToken);
 
             if (session != null)
             {
