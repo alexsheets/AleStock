@@ -120,6 +120,16 @@ namespace AleStock.Controllers.Stock
             """;
         }
 
+        public string returnPromptFiling()
+        {
+            return """
+                You will act as a financial analyst. 
+                You will be given recent filing, which you should analyze and respond with the most important parts in a simple summarization.
+                You should try to relay the information in such a way that it is easily understandable,
+                as if it were being written for someone who is a beginner in understanding the stock market.
+            """;
+        }
+
         // simple function to convert a stock record to the necessary information for AI analyzation
         public StockRecordInfoForAIViewModel ConvertStockRecord(StockEconomicalInfo record)
         {
@@ -297,56 +307,93 @@ namespace AleStock.Controllers.Stock
         }
 
         [HttpPost]
-        public async Task<ActionResult> SubmitInitReportChoices([DataSourceRequest] DataSourceRequest request, FilingsChoicesViewModel vm)
+        public async Task<ActionResult> GetFilingAISummarization([DataSourceRequest] DataSourceRequest request, FilingsChoicesViewModel vm)
         {
-
-            if (vm.Ticker == null || vm.Year == null)
+            try
             {
-                TempData["ValidationMsg"] = "Missing a parameter. Please retry.";
-                return View("AIFilingSummarizationChoices");
-            }
-            else
-            {
-
-                // use information to retrieve filings from simfin
-                string url = $"https://backend.simfin.com/api/v3/filings/by-company?ticker={vm.Ticker}";
-
-                RestRequest _request = new RestRequest();
-                RestClient _restClient = new RestClient();
-                RestClientOptions _restClientOptions = new RestClientOptions();
-                _restClientOptions = new RestClientOptions(url);
-
-                // instantiate client
-                _restClient = new RestClient(_restClientOptions);
-                _request = new RestRequest("");
-                _request.AddHeader("Accept", "application/json, text/plain, */*");
-                _request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36");
-
-                // check if user has attributed simfin key
-                var user = _supabaseClient.Auth.CurrentUser;
-
-                // retrieve user api keys based on email
-                UserAPIKeys keys = await _dbContext.GetUserAPIKeys(user.Email);
-
-                // add api key/auth header
-                _request.AddHeader("Authorization", keys.Simfin_Key);
-
-                // get link using params and return as jsonified content
-                var response = await _restClient.GetAsync(_request);
-
-                // return response
-                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                if (vm.Ticker == null || vm.Year == null)
                 {
-                    return new JsonResult(response);
+                    TempData["ValidationMsg"] = "Missing a parameter. Please retry.";
+                    return View("AIFilingSummarizationChoices");
                 }
-                
+                else
+                {
 
-                // create viewmodel of information
+                    // use information to retrieve filings from simfin
+                    string url = $"https://backend.simfin.com/api/v3/filings/by-company?ticker={vm.Ticker}";
+
+                    RestRequest _request = new RestRequest();
+                    RestClient _restClient = new RestClient();
+                    RestClientOptions _restClientOptions = new RestClientOptions();
+                    _restClientOptions = new RestClientOptions(url);
+
+                    // instantiate client
+                    _restClient = new RestClient(_restClientOptions);
+                    _request = new RestRequest("");
+                    _request.AddHeader("Accept", "application/json, text/plain, */*");
+                    _request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36");
+
+                    // check if user has attributed simfin key
+                    var user = _supabaseClient.Auth.CurrentUser;
+
+                    // retrieve user api keys based on email
+                    UserAPIKeys keys = await _dbContext.GetUserAPIKeys(user.Email);
+
+                    // add api key/auth header
+                    _request.AddHeader("Authorization", keys.Simfin_Key);
+
+                    // get link using params and return as jsonified content
+                    var response = await _restClient.GetAsync(_request);
+
+                    // return response
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        // retrieve most recent filing from this list
+
+
+                        // perform AI analyzation
+                        StringBuilder contentBuilder = new();
+
+                        // instantiate openAI chat model using api
+                        ChatClient client = new(
+                            model: "gpt-4o",
+                            apiKey: keys.OpenAI_Key
+                        );
+
+                        List<ChatMessage> prompt_messages = [
+                            returnPromptFiling(),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(recentFiling)
+                        ];
+
+                        List<ChatMessage> response_messages = [];
+                        ChatCompletion completion = await client.CompleteChatAsync(prompt_messages);
+                        List<string> message_stream = new List<string>();
+
+                        // process in chunks?
+
+                        int i = 0;
+                        while (completion.Content[i] != null)
+                        {
+                            message_stream.Add(completion.Content[i].Text);
+                            i++;
+                        }
+
+                        // create viewmodel of passed back information
+                    }
+
+
+                    // create viewmodel of information
 
 
 
 
-                return View("AIFilingSummarization");
+                    return View("AIFilingSummarization");
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ValidationMsg"] = "Error with submission. Please retry.";
+                return View("AIFilingSummarizationChoices");
             }
         }
 
