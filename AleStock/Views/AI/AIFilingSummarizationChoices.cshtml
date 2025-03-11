@@ -1,10 +1,12 @@
-﻿@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
-
-@model AleStock.Models.ViewModels.StockChoicesViewModel
+﻿@model AleStock.Models.ViewModels.FilingsChoicesViewModel
 
 <style>
+
+    #FilingChoices {
+        margin-top: 3%;
+        padding-bottom: 7%;
+        text-align: center !important;
+    }
 
     label {
         display: block;
@@ -27,7 +29,7 @@
 </style>
 
 
-<div id="StockChoiceSubmissionDiv">
+<div id="FilingChoices">
 
     <!-- if there is an error, show the message at the top of the page that has been returned from the controller -->
     @if (TempData["ValidationMsg"] != null)
@@ -39,32 +41,12 @@
         </div>
     }
 
-    @using (Html.BeginForm("SubmitStockChoices", "Stock", FormMethod.Post, new { @id = "SubmitStockChoicesForm" }))
+    @using (Html.BeginForm("SubmitFilingReportChoices", "AI", FormMethod.Post, new { @id = "SubmitFilingReportChoices" }))
     {
-
-        @Html.Raw("<br />")
-        @Html.Raw("<br />")
 
         <div class="inputDiv1">
             <label>Type in ticker:</label>
             @Html.TextBoxFor(e => e.Ticker)
-        </div>
-
-        @Html.Raw("<br />")
-        @Html.Raw("<br />")
-
-        <div class="inputDiv2" id="dropdownInputDiv">
-            <label>Choose quarter of fiscal year to analyze:</label>
-            @(
-                Html.DropDownListFor(m => m.Quarter,
-                new List<SelectListItem> {
-                    new SelectListItem { Value = "Q1" , Text = "Q1" },
-                    new SelectListItem { Value = "Q2" , Text = "Q2" },
-                    new SelectListItem { Value = "Q3" , Text = "Q3" },
-                    new SelectListItem { Value = "Q4" , Text = "Q4" }
-                },
-                new { @class = "myselect" })
-            )
         </div>
 
         @Html.Raw("<br />")
@@ -87,10 +69,8 @@
                 new { @class = "myselect" })
             )
         </div>
-        
 
         @Html.Raw("<br />")
-
 
         <div class="submitBtnDiv">
             <button type="submit" class="k-button">Submit</button>

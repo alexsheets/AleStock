@@ -48,7 +48,35 @@ namespace AleStock.Controllers.Stock
             Session session = await SetSessionForControllerAsync();
             if (session != null)
             {
-                return View("FinanceAnalyzation");
+                return View("AIFinanceSummarization");
+            }
+            else
+            {
+                TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        public async Task<IActionResult> AIFilingSummarization()
+        {
+            Session session = await SetSessionForControllerAsync();
+            if (session != null)
+            {
+                return View("AIFilingSummarization");
+            }
+            else
+            {
+                TempData["ValidationMsg"] = "Error with authenticating the current session. Please re-login.";
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        public async Task<IActionResult> AIFilingSummarizationChoices()
+        {
+            Session session = await SetSessionForControllerAsync();
+            if (session != null)
+            {
+                return View("AIFilingSummarizationChoices");
             }
             else
             {
@@ -266,6 +294,30 @@ namespace AleStock.Controllers.Stock
             }
         }
 
+        [HttpPost]
+        public ActionResult SubmitInitReportChoices([DataSourceRequest] DataSourceRequest request, FilingsChoicesViewModel vm)
+        {
+
+            if (vm.Ticker == null || vm.Year == null)
+            {
+                TempData["ValidationMsg"] = "Missing a parameter. Please retry.";
+                return View("AIFilingSummarizationChoices");
+            }
+            else
+            {
+
+                // use information to retrieve filings from simfin
+
+
+
+                // create viewmodel of information
+
+
+
+
+                return View("AIFilingSummarization");
+            }
+        }
 
     }
 }
