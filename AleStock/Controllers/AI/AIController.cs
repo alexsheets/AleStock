@@ -9,6 +9,8 @@ using OpenAI.Chat;
 using System.ClientModel;
 using System.Text;
 using Supabase.Gotrue;
+using Microsoft.AspNet.SignalR;
+using RestSharp;
 
 namespace AleStock.Controllers.Stock
 {
@@ -295,7 +297,7 @@ namespace AleStock.Controllers.Stock
         }
 
         [HttpPost]
-        public ActionResult SubmitInitReportChoices([DataSourceRequest] DataSourceRequest request, FilingsChoicesViewModel vm)
+        public async Task<ActionResult> SubmitInitReportChoices([DataSourceRequest] DataSourceRequest request, FilingsChoicesViewModel vm)
         {
 
             if (vm.Ticker == null || vm.Year == null)
@@ -307,8 +309,37 @@ namespace AleStock.Controllers.Stock
             {
 
                 // use information to retrieve filings from simfin
+                string url = $"https://backend.simfin.com/api/v3/filings/by-company?ticker={vm.Ticker}";
 
+                RestRequest _request = new RestRequest();
+                RestClient _restClient = new RestClient();
+                RestClientOptions _restClientOptions = new RestClientOptions();
+                _restClientOptions = new RestClientOptions(url);
 
+                // instantiate client
+                _restClient = new RestClient(_restClientOptions);
+                _request = new RestRequest("");
+                _request.AddHeader("Accept", "application/json, text/plain, */*");
+                _request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36");
+
+                // check if user has attributed simfin key
+                var user = _supabaseClient.Auth.CurrentUser;
+
+                // retrieve user api keys based on email
+                UserAPIKeys keys = await _dbContext.GetUserAPIKeys(user.Email);
+
+                // add api key/auth header
+                _request.AddHeader("Authorization", keys.Simfin_Key);
+
+                // get link using params and return as jsonified content
+                var response = await _restClient.GetAsync(_request);
+
+                // return response
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    return new JsonResult(response);
+                }
+                
 
                 // create viewmodel of information
 
