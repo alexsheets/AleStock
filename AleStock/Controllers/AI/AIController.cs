@@ -320,7 +320,7 @@ namespace AleStock.Controllers.Stock
                 {
 
                     // use information to retrieve filings from simfin
-                    string url = $"https://backend.simfin.com/api/v3/filings/by-company?ticker={vm.Ticker}";
+                    string url = $"https://prod.simfin.com/api/v3/filings/by-company?ticker={vm.Ticker}";
 
                     RestRequest _request = new RestRequest();
                     RestClient _restClient = new RestClient();
@@ -349,7 +349,7 @@ namespace AleStock.Controllers.Stock
                     if (response.StatusCode == System.Net.HttpStatusCode.OK)
                     {
                         // retrieve most recent filing from this list
-
+                        string data = response.Content;
 
                         // perform AI analyzation
                         StringBuilder contentBuilder = new();

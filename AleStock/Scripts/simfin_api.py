@@ -18,7 +18,7 @@ class SimFinAPI:
         # create param string to append to url for GET request
         params = f'?ticker={ticker}&statements={statement_type}&fyear={year}&period={period}'
         # create link to backend with params appended
-        req_link = 'https://backend.simfin.com/api/v3/companies/statements/compact/{}'.format(params)
+        req_link = 'https://prod.simfin.com/api/v3/companies/statements/compact/{}'.format(params)
 
         req = Request(req_link)
         req.add_header('Accept', 'application/json, text/plain, */*')
